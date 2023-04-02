@@ -15,8 +15,6 @@ section "WRAM Bank0", wram0[$c000]
 ; *******************************************************************
 
 
-wram0Section EQU $C000
-
 ; Generic 40 tiles buffer for OAM data. Copied to OAM by DMA.
 ; During World gameplay, the OAM buffer is split between 12 OAM
 ; tiles for Link, and 28 OAM tiles for dynamic entities.

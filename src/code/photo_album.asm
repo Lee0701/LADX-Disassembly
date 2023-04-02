@@ -2180,7 +2180,7 @@ PhotoAlbumPrintErrorHandler:
     ld   e, [hl]                                  ; $4DBA: PhotoAlbumPrintErrorHandler $5E
     inc  hl                                       ; $4DBB: PhotoAlbumPrintErrorHandler $23
     ld   d, [hl]                                  ; $4DBC: PhotoAlbumPrintErrorHandler $56
-    ld   hl, wram0Section                         ; $4DBD: PhotoAlbumPrintErrorHandler $21 $00 $C0
+    ld   hl, _RAM                         ; $4DBD: PhotoAlbumPrintErrorHandler $21 $00 $C0
 .func_028_4DC0::
     ld   a, [de]                                  ; $4DC0: PhotoAlbumPrintErrorHandler $1A
     cp   $FF                                      ; $4DC1: PhotoAlbumPrintErrorHandler $FE $FF

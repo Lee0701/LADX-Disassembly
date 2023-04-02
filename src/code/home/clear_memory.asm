@@ -4,12 +4,12 @@
 
 ; Clear $1600 bytes of WRAM (from $C000 to wDrawCommandsSection)
 ClearLowerAndMiddleWRAM::
-    ld   bc, wDrawCommandsSection - wram0Section  ; $29C1: $01 $00 $16
+    ld   bc, wDrawCommandsSection - _RAM          ; $29C1: $01 $00 $16
     jr   ClearWRAMBytes                           ; $29C4: $18 $16
 
 ; Clear $1300 bytes of WRAM (from $C000 to wAudioSection)
 ClearLowerWRAM::
-    ld   bc, wAudioSection - wram0Section         ; $29C6: $01 $00 $13
+    ld   bc, wAudioSection - _RAM                 ; $29C6: $01 $00 $13
     jr   ClearWRAMBytes                           ; $29C9: $18 $11
 
 ; Clear lower values of HRAM (from hGameValuesSection to hNextDefaultMusicTrack) and all WRAM
@@ -28,11 +28,11 @@ ClearHRAMBytesAndWRAM::
     ld   hl, hGameValuesSection                   ; $29D3: $21 $90 $FF
     call ClearBytes                               ; $29D6: $CD $DF $29
     ; Set all bytes of WRAM (from $C000 to $DF00) to zero
-    ld   bc, $DF00 - wram0Section                 ; $29D9: $01 $00 $1F
+    ld   bc, $DF00 - _RAM                         ; $29D9: $01 $00 $1F
 
 ; Set BC bytes of WRAM (starting from $C000) to zero
 ClearWRAMBytes::
-    ld   hl, wram0Section                         ; $29DC: $21 $00 $C0
+    ld   hl, _RAM                                 ; $29DC: $21 $00 $C0
 
 ; Set BC bytes of memory starting from HL to zero
 ClearBytes::
