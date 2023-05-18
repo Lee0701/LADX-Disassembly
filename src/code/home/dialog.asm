@@ -579,6 +579,20 @@ ENDR
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
     ld   e, a                                     ; $260A: $5F
+
+    bit 7, a
+    jr z, .singleByte
+    bit 6, a
+    jr z, .end
+    bit 5, a
+    jr z, .doubleByte
+    ; bit 4, a
+    ; jr z, .tripleByte
+    ; bit 3, a
+    ; jr z, .quadByte
+    jr .endChar
+
+.singleByte
     ld   a, BANK(CodepointToTileMap)              ; $260B: $3E $1C
     ld   [rSelectROMBank], a                      ; $260D: $EA $00 $21
     ld   hl, CodepointToTileMap                   ; $2610: $21 $41 $46
@@ -598,8 +612,42 @@ ENDR
     add  hl, de                                   ; $262D: $19
     ld   c, l                                     ; $262E: $4D
     ld   b, h                                     ; $262F: $44
-    pop  hl                                       ; $2630: $E1
-    ld   e, $10                                   ; $2631: $1E $10
+    jr .endChar
+
+.doubleByte
+    push af
+    and a, $1c
+    rrca
+    rrca
+    ld b, a
+    jr .lastByte
+
+; .tripleByte
+;     push af
+;     jr .lastByte
+
+; .quadByte
+;     push af
+;     jr .lastByte
+
+.lastByte
+    pop af
+
+    and a, $03
+    rrca
+    rrca
+    ld c, a
+
+    push hl
+    ; call incrementDialogCharacterIndex
+    call getDialogCharacter
+    pop hl
+
+.endChar
+    call ReloadSavedBank                          ; $2627: $CD $1D $08
+    pop  hl
+    ld   e, $10
+
     ; copy character tile data to wDrawCommandData
 .copyTileLoop
     ld   a, [bc]                                  ; $2633: $0A
@@ -610,50 +658,12 @@ ENDR
     ld   [hl], $00                                ; $2639: $36 $00
     push hl                                       ; $263B: $E5
 
-    ; Check if the current character has a diacritic tile above
-    ; (if compiled with support for diacritics)
-    ; ld   a, BANK(CodepointToDiacritic)            ; $263C: $3E $1C
-    ; ld   [rSelectROMBank], a ; current character  ; $263E: $EA $00 $21
-    ; ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
-    ; ld   e, a                                     ; $2643: $5F
-    ; ld   d, $00                                   ; $2644: $16 $00
-; IF __DIACRITICS_SUPPORT__
-;     ld   hl, CodepointToDiacritic
-;     add  hl, de
-;     ld   a, [hl]
-; ELSE
     xor  a                                        ; $2646: $AF
-; ENDC
+
     pop  hl                                       ; $2647: $E1
     and  a                                        ; $2648: $A7
-    jr   z, .noDiacritic                          ; $2649: $28 $18
-    ; ld   e, a                                     ; $264B: $5F
-    ; ld   a, [wC175]                               ; $264C: $FA $75 $C1
-    ; ldi  [hl], a                                  ; $264F: $22
-    ; ld   a, [wC176]                               ; $2650: $FA $76 $C1
-    ; sub  a, $20                                   ; $2653: $D6 $20
-    ; ldi  [hl], a                                  ; $2655: $22
-    ; ld   a, $00                                   ; $2656: $3E $00
-    ; ldi  [hl], a                                  ; $2658: $22
-    ; ld   a, DIALOG_DIACRITIC_1                    ; $2659: $3E $C9
-    ; rr   e                                        ; $265B: $CB $1B
-    ; jr   c, .handleDiacriticTile                  ; $265D: $38 $01
-    ; dec  a ; DIALOG_DIACRITIC_2                   ; $265F: $3D
 
-; .handleDiacriticTile
-;     ldi  [hl], a                                  ; $2660: $22
-;     ld   [hl], $00                                ; $2661: $36 $00
-
-.noDiacritic
-    ld   a, [wDialogCharacterIndex]               ; $2663: $FA $70 $C1
-    ; increment character index
-    ; (add is used because inc doesn't set the carry flag)
-    add  a, $01                                   ; $2666: $C6 $01
-    ld   [wDialogCharacterIndex], a               ; $2668: $EA $70 $C1
-    ld   a, [wDialogCharacterIndexHi]             ; $266B: $FA $64 $C1
-    adc  a, $00                                   ; $266E: $CE $00
-    ld   [wDialogCharacterIndexHi], a             ; $2670: $EA $64 $C1
-    xor  a                                        ; $2673: $AF
+    call incrementDialogCharacterIndex
     ld   [wDialogIsWaitingForButtonPress], a      ; $2674: $EA $CC $C1
     ; check if we've filled the dialog box with 32 characters
     ld   a, [wDialogNextCharPosition]             ; $2677: $FA $71 $C1
@@ -671,6 +681,26 @@ ENDR
 
 .dialogBoxFull
     jp   IncrementDialogStateAndReturn            ; $268E: $C3 $85 $24
+
+incrementDialogCharacterIndex::
+    ld   a, [wDialogCharacterIndex]               ; $2663: $FA $70 $C1
+    ; increment character index
+    ; (add is used because inc doesn't set the carry flag)
+    add  a, $01                                   ; $2666: $C6 $01
+    ld   [wDialogCharacterIndex], a               ; $2668: $EA $70 $C1
+    ld   a, [wDialogCharacterIndexHi]             ; $266B: $FA $64 $C1
+    adc  a, $00                                   ; $266E: $CE $00
+    ld   [wDialogCharacterIndexHi], a             ; $2670: $EA $64 $C1
+    xor  a                                        ; $2673: $AF
+    ret
+
+getDialogCharacter::
+    ld   a, [wDialogCharacterIndex]
+    ld   e, a
+    ld   a, [wDialogCharacterIndexHi]
+    ld   d, a
+    add  hl, de
+    ret
 
 data_2691::
     db $22, $42                                   ; $2691

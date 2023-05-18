@@ -343,7 +343,6 @@ include "data/codepoint_to_diacritic.asm"
 include "data/dialogs/dialog_banks.asm"
 include "code/dialog_letters.asm"
 include "text/dialog_3.asm"
-include "text/dialog_000.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
 include "text/dialog_4.asm"
@@ -572,5 +571,8 @@ include "code/photos_bg.asm"
 ; Unused banks; make blank sections so they are filled with $00 instead of $ff to match
 ; the rom
 section "bank3E",romx[$4000],bank[$3E]
+include "text/dialog_000.asm"
+
 section "bank3F",romx[$4000],bank[$3F]
+include "text/dialog_080.asm"
 include "text/dialog_5.asm"
