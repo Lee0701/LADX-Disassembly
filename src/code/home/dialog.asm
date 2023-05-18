@@ -612,37 +612,37 @@ ENDR
 
     ; Check if the current character has a diacritic tile above
     ; (if compiled with support for diacritics)
-    ld   a, BANK(CodepointToDiacritic)            ; $263C: $3E $1C
-    ld   [rSelectROMBank], a ; current character  ; $263E: $EA $00 $21
-    ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
-    ld   e, a                                     ; $2643: $5F
-    ld   d, $00                                   ; $2644: $16 $00
-IF __DIACRITICS_SUPPORT__
-    ld   hl, CodepointToDiacritic
-    add  hl, de
-    ld   a, [hl]
-ELSE
+    ; ld   a, BANK(CodepointToDiacritic)            ; $263C: $3E $1C
+    ; ld   [rSelectROMBank], a ; current character  ; $263E: $EA $00 $21
+    ; ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
+    ; ld   e, a                                     ; $2643: $5F
+    ; ld   d, $00                                   ; $2644: $16 $00
+; IF __DIACRITICS_SUPPORT__
+;     ld   hl, CodepointToDiacritic
+;     add  hl, de
+;     ld   a, [hl]
+; ELSE
     xor  a                                        ; $2646: $AF
-ENDC
+; ENDC
     pop  hl                                       ; $2647: $E1
     and  a                                        ; $2648: $A7
     jr   z, .noDiacritic                          ; $2649: $28 $18
-    ld   e, a                                     ; $264B: $5F
-    ld   a, [wC175]                               ; $264C: $FA $75 $C1
-    ldi  [hl], a                                  ; $264F: $22
-    ld   a, [wC176]                               ; $2650: $FA $76 $C1
-    sub  a, $20                                   ; $2653: $D6 $20
-    ldi  [hl], a                                  ; $2655: $22
-    ld   a, $00                                   ; $2656: $3E $00
-    ldi  [hl], a                                  ; $2658: $22
-    ld   a, DIALOG_DIACRITIC_1                    ; $2659: $3E $C9
-    rr   e                                        ; $265B: $CB $1B
-    jr   c, .handleDiacriticTile                  ; $265D: $38 $01
-    dec  a ; DIALOG_DIACRITIC_2                   ; $265F: $3D
+    ; ld   e, a                                     ; $264B: $5F
+    ; ld   a, [wC175]                               ; $264C: $FA $75 $C1
+    ; ldi  [hl], a                                  ; $264F: $22
+    ; ld   a, [wC176]                               ; $2650: $FA $76 $C1
+    ; sub  a, $20                                   ; $2653: $D6 $20
+    ; ldi  [hl], a                                  ; $2655: $22
+    ; ld   a, $00                                   ; $2656: $3E $00
+    ; ldi  [hl], a                                  ; $2658: $22
+    ; ld   a, DIALOG_DIACRITIC_1                    ; $2659: $3E $C9
+    ; rr   e                                        ; $265B: $CB $1B
+    ; jr   c, .handleDiacriticTile                  ; $265D: $38 $01
+    ; dec  a ; DIALOG_DIACRITIC_2                   ; $265F: $3D
 
-.handleDiacriticTile
-    ldi  [hl], a                                  ; $2660: $22
-    ld   [hl], $00                                ; $2661: $36 $00
+; .handleDiacriticTile
+;     ldi  [hl], a                                  ; $2660: $22
+;     ld   [hl], $00                                ; $2661: $36 $00
 
 .noDiacritic
     ld   a, [wDialogCharacterIndex]               ; $2663: $FA $70 $C1
