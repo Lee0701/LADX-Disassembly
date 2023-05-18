@@ -121,42 +121,17 @@ azlj-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/J0/src/
 azlj-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLJ"
 
 #
-# German
+# UTF-8
 #
 
-azlg_asm = $(shell find revisions/G0 -type f -name '*.asm')
-azlg_gfx = $(shell find revisions/G0 -type f -name '*.png')
-azlg_bin = $(shell find revisions/G0 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
+azlu_asm = $(shell find revisions/U8 -type f -name '*.asm')
+azlu_gfx = $(shell find revisions/U8 -type f -name '*.png')
+azlu_bin = $(shell find revisions/U8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
 
-games += azlg.gbc
-src/main.azlg.o: $(azlg_asm) $(azlg_gfx:.png=.2bpp) $(azlg_bin)
-azlg_ASFLAGS = -DLANG=DE -DVERSION=0 -i revisions/G0/src/
-azlg_FXFLAGS = --rom-version 0 --non-japanese --title "ZELDA"
-
-games += azlg-r1.gbc
-src/main.azlg-r1.o: $(azlg_asm) $(azlg_gfx:.png=.2bpp) $(azlg_bin) azlj-r2.gbc
-azlg-r1_ASFLAGS = -DLANG=DE -DVERSION=1 -i revisions/G0/src/
-azlg-r1_LDFLAGS = -O azlj-r2.gbc
-azlg-r1_FXFLAGS = --rom-version 1 --non-japanese --title "ZELDA" --game-id "AZLD"
-
-#
-# French
-#
-
-azlf_asm = $(shell find revisions/F0 -type f -name '*.asm')
-azlf_gfx = $(shell find revisions/F0 -type f -name '*.png')
-azlf_bin = $(shell find revisions/F0 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
-
-games += azlf.gbc
-src/main.azlf.o: $(azlf_asm) $(azlf_gfx:.png=.2bpp) $(azlf_bin)
-azlf_ASFLAGS = -DLANG=FR -DVERSION=0 -i revisions/F0/src/
-azlf_FXFLAGS = --rom-version 0 --non-japanese --title "ZELDA"
-
-games += azlf-r1.gbc
-src/main.azlf-r1.o: $(azlf_asm) $(azlf_gfx:.png=.2bpp) $(azlf_bin) azlg-r1.gbc
-azlf-r1_ASFLAGS = -DLANG=FR -DVERSION=1 -i revisions/F0/src/
-azlf-r1_LDFLAGS = -O azlg-r1.gbc
-azlf-r1_FXFLAGS = --rom-version 1 --non-japanese --title "ZELDA" --game-id "AZLF"
+games += azlu-r2.gbc
+src/main.azlu-r2.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/U8/src/
+azlu-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLu"
 
 #
 # English
@@ -205,5 +180,3 @@ clean:
 	rm -f $(games:.gbc=.sym)
 	rm -f $(gfx_files:.png=.2bpp)
 	rm -f $(azlj_gfx:.png=.2bpp)
-	rm -f $(azlg_gfx:.png=.2bpp)
-	rm -f $(azlf_gfx:.png=.2bpp)
