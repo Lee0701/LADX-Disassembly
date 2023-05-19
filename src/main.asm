@@ -577,3 +577,6 @@ include "text/dialog_000.asm"
 section "bank3F",romx[$4000],bank[$3F]
 include "text/dialog_080.asm"
 include "text/dialog_5.asm"
+
+; section "bank50",romx[$4000],bank[$50]
+include "gfx/fonts/font_unicode_table.asm"
