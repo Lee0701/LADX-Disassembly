@@ -58,14 +58,22 @@ ReadDialogNextChar::
 IF __USE_FIXED_DIALOG_BANKS__
     ld   l, e
     ld   h, d
-    ld   e, BANK(Dialog000)
     ld   a, [wDialogIndexHi]
     and  a
-    jr   z, .foundBank
+    jr   z, .dialog0xx
     ld   e,  BANK(Dialog100)
     cp   $01
     jr   z, .foundBank
     ld   e,  BANK(Dialog200)
+    jr .foundBank
+
+.dialog0xx
+    ld   e, BANK(Dialog080)
+    ld a, [wDialogIndex]
+    cp $80
+    jr nc, .foundBank
+    ld   e, BANK(Dialog000)
+
 .foundBank
     ld   a, e
     ld   [rSelectROMBank], a
