@@ -580,3 +580,13 @@ include "text/dialog_5.asm"
 
 ; section "bank50",romx[$4000],bank[$50]
 include "gfx/fonts/font_unicode_table.asm"
+
+DEF BANK_LEN = $4000
+DEF BANK_NUM = $80
+DEF OFFSET = $0
+REPT 8
+    section "bank{BANK_NUM}",romx[$4000],bank[{BANK_NUM}]
+    incbin "gfx/fonts/font_unicode.2bpp",OFFSET,BANK_LEN
+    REDEF BANK_NUM = BANK_NUM + $1
+    REDEF OFFSET = OFFSET + BANK_LEN
+ENDR
