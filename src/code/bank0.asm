@@ -455,9 +455,12 @@ func_036_4BE8_trampoline::
 
 func_A9B::
     push af                                       ; $0A9B: $F5
-    ld   a, BANK(FontTiles)                       ; $0A9C: $3E $0F
-    call SwitchBank                               ; $0A9E: $CD $0C $08
-    call ExecuteDialog                            ; $0AA1: $CD $21 $23
+    ; TODO
+    ; ld   a, BANK(FontTiles)                       ; $0A9C: $3E $0F
+    ; call SwitchBank                               ; $0A9E: $CD $0C $08
+    callsb ExecuteDialog                            ; $0AA1: $CD $21 $23
+    ; TODO: Check if this works
+    call ReloadSavedBank
     jp   RestoreStackedBankAndReturn              ; $0AA4: $C3 $73 $09
 
 func_036_705A_trampoline::
@@ -1560,9 +1563,12 @@ label_1012::
 
 returnFromGameplayHandler::
     ; Present dialog if needed
-    ld   a, BANK(FontTiles)                       ; $101A: $3E $0F
-    call SwitchBank                               ; $101C: $CD $0C $08
-    call ExecuteDialog                            ; $101F: $CD $21 $23
+    ; TODO
+    ; ld   a, BANK(FontTiles)                       ; $101A: $3E $0F
+    ; call SwitchBank                               ; $101C: $CD $0C $08
+    callsb ExecuteDialog                            ; $101F: $CD $21 $23
+    ; TODO: Check if this works (Doubt it doesn't)
+    ; call ReloadSavedBank
 
     ; If on DMG, return now to the main game loop
     ldh  a, [hIsGBC]                              ; $1022: $F0 $FE
