@@ -81,7 +81,19 @@ DialogClosingEndHandler::
     cp   a, $08                                   ; $23C7: $FE $08
     ret  c                                        ; $23C9: $D8
 
-    jpsb func_021_53CF                            ; $23CA: $3E $21 $EA $00 $21 $C3 $CF $53
+    ; jpsb func_021_53CF                            ; $23CA: $3E $21 $EA $00 $21 $C3 $CF $53
+
+    ld   hl, wFarcallParams                       ; $5498: $21 $01 $DE
+    ld   a, BANK(func_021_53CF)                   ; $549B: $3E $21
+    ld   [hl+], a                                 ; $549D: $22
+    ld   a, HIGH(func_021_53CF)                   ; $549E: $3E $53
+    ld   [hl+], a                                 ; $54A0: $22
+    ld   a, LOW(func_021_53CF)                    ; $54A1: $3E $B6
+    ld   [hl+], a                                 ; $54A3: $22
+    ld   a, BANK(@)                               ; $54A4: $3E $14
+    ld   [wFarcallReturnBank], a                  ; $54A6: $EA $04 $DE
+    jp   Farcall                                  ; $54A9: $C3 $D7 $0B
+    ret
 
 ; This array actually begins two bytes before,
 ; in the middle of the `jp` instruction,
@@ -811,7 +823,19 @@ DialogChoiceHandler::
     ldh  a, [hFrameCounter]                       ; $27AA: $F0 $E7
     and  $10                                      ; $27AC: $E6 $10
     ret  z                                        ; $27AE: $C8
-    jpsb func_017_7DCC                            ; $27AF: $3E $17 $EA $00 $21 $C3 $CC $7D
+    ; jpsb func_017_7DCC                            ; $27AF: $3E $17 $EA $00 $21 $C3 $CC $7D
+
+    ld   hl, wFarcallParams                       ; $5498: $21 $01 $DE
+    ld   a, BANK(func_017_7DCC)                   ; $549B: $3E $21
+    ld   [hl+], a                                 ; $549D: $22
+    ld   a, HIGH(func_017_7DCC)                   ; $549E: $3E $53
+    ld   [hl+], a                                 ; $54A0: $22
+    ld   a, LOW(func_017_7DCC)                    ; $54A1: $3E $B6
+    ld   [hl+], a                                 ; $54A3: $22
+    ld   a, BANK(@)                               ; $54A4: $3E $14
+    ld   [wFarcallReturnBank], a                  ; $54A6: $EA $04 $DE
+    jp   Farcall                                  ; $54A9: $C3 $D7 $0B
+    ret
 
 .jp_27B7
 IF __OPTIMIZATIONS_2__
@@ -822,7 +846,19 @@ ELSE
 ENDC
 
 func_27BB::
-    jpsb func_017_7D7C                            ; $27BB: $3E $17 $EA $00 $21 $C3 $7C $7D
+    ; jpsb func_017_7D7C                            ; $27BB: $3E $17 $EA $00 $21 $C3 $7C $7D
+
+    ld   hl, wFarcallParams                       ; $5498: $21 $01 $DE
+    ld   a, BANK(func_017_7D7C)                   ; $549B: $3E $21
+    ld   [hl+], a                                 ; $549D: $22
+    ld   a, HIGH(func_017_7D7C)                   ; $549E: $3E $53
+    ld   [hl+], a                                 ; $54A0: $22
+    ld   a, LOW(func_017_7D7C)                    ; $54A1: $3E $B6
+    ld   [hl+], a                                 ; $54A3: $22
+    ld   a, BANK(@)                               ; $54A4: $3E $14
+    ld   [wFarcallReturnBank], a                  ; $54A6: $EA $04 $DE
+    jp   Farcall                                  ; $54A9: $C3 $D7 $0B
+    ret
 
 jr_014_5444:
     xor  a                                        ; $5444: $AF

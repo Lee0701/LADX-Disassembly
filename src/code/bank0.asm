@@ -697,10 +697,13 @@ Farcall::
     ; Switch to bank wFarcallBank
     ld   a, [wFarcallBank]                        ; $0BD7: $FA $01 $DE
     ld   [rSelectROMBank], a                      ; $0BDA: $EA $00 $21
+    ; Push return bank in advance for consecutive calls
+    ld   a, [wFarcallReturnBank]                  ; $0BE0: $FA $04 $DE
+    push af
     ; Call the target function
     call Farcall_trampoline                       ; $0BDD: $CD $E7 $0B
     ; Switch back to bank wFarcallReturnBank
-    ld   a, [wFarcallReturnBank]                  ; $0BE0: $FA $04 $DE
+    pop af
     ld   [rSelectROMBank], a                      ; $0BE3: $EA $00 $21
     ret                                           ; $0BE6: $C9
 
