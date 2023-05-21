@@ -1,7 +1,7 @@
 
 section "bank50",romx[$4000],bank[$50]
 gfx_font_unicode_table::
-	db $00, $0f
+	db $00, $00
 	db $00, $00
 	db $00, $00
 	db $00, $00

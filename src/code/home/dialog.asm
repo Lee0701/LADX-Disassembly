@@ -36,6 +36,7 @@ OpenDialogInTable0::
     xor  a                                        ; $238E: $AF
     ld   [wDialogOpenCloseAnimationFrame], a      ; $238F: $EA $6F $C1
     ld   [wDialogCharacterIndex], a               ; $2392: $EA $70 $C1
+    ld [wDialogNextCharPosition], a
     ld   [wDialogCharacterIndexHi], a             ; $2395: $EA $64 $C1
     ld   [wNameIndex], a                          ; $2398: $EA $08 $C1
     ld   [wDialogIndexHi], a                      ; $239B: $EA $12 $C1
@@ -54,7 +55,37 @@ OpenDialogInTable0::
 
     ret                                           ; $23AF: $C9
 
+IncrementAndReadNextChar::
+    call IncrementDialogNextCharIndex
+    call ReadDialogNextChar
+    ret
+
+IncrementDialogNextCharIndex::
+    ld   a, [wDialogCharacterIndex]               ; $2663: $FA $70 $C1
+    ; increment character index
+    ; (add is used because inc doesn't set the carry flag)
+    add  a, $01                                   ; $2666: $C6 $01
+    ld   [wDialogCharacterIndex], a               ; $2668: $EA $70 $C1
+    ld   a, [wDialogCharacterIndexHi]             ; $266B: $FA $64 $C1
+    adc  a, $00                                   ; $266E: $CE $00
+    ld   [wDialogCharacterIndexHi], a             ; $2670: $EA $64 $C1
+    ret
+
 ReadDialogNextChar::
+    push hl
+    push de
+    ld   a, [wDialogIndexHi]                      ; $2550: $FA $12 $C1
+    ld   d, a                                     ; $2553: $57
+    ld   a, [wDialogIndex]                        ; $2554: $FA $73 $C1
+    ld   e, a                                     ; $2557: $5F
+    sla  e                                        ; $2558: $CB $23
+    rl   d                                        ; $255A: $CB $12
+    ld   hl, DialogPointerTable                   ; $255C: $21 $01 $40
+    add  hl, de                                   ; $255F: $19
+    ld   a, [hli]                                 ; $2560: $2A
+    ld   e, a                                     ; $2561: $5F
+    ld   d, [hl]                                  ; $2562: $56
+
 IF __USE_FIXED_DIALOG_BANKS__
     ld   l, e
     ld   h, d
@@ -106,18 +137,21 @@ ENDC
     ld   a, $1c
     ld   [rSelectROMBank], a
     ld   a, e                                     ; $2589: $7B
+
+    pop de
+    pop hl
     ret
 
 ;;
 ; Can only be called from bank $1c.
 ReadByteFromBankA::
-	push bc
-	ld [rSelectROMBank], a
-	ld b, [hl]
+    push bc
+    ld [rSelectROMBank], a
+    ld b, [hl]
 
-	ld a, $1c
-	ld [rSelectROMBank], a
+    ld a, $1c
+    ld [rSelectROMBank], a
 
-	ld a, b
-	pop bc
-	ret
+    ld a, b
+    pop bc
+    ret

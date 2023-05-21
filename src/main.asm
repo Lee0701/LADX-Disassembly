@@ -578,13 +578,17 @@ section "bank3F",romx[$4000],bank[$3F]
 include "text/dialog_080.asm"
 include "text/dialog_5.asm"
 
+; Sections are defined in the asm file
 ; section "bank50",romx[$4000],bank[$50]
 include "gfx/fonts/font_unicode_table.asm"
 
+section "bank80",romx[$4000],bank[$80]
+gfx_font_unicode:
+incbin "gfx/fonts/font_unicode.2bpp",$0,$4000
 DEF BANK_LEN = $4000
-DEF BANK_NUM = $80
-DEF OFFSET = $0
-REPT 8
+DEF BANK_NUM = $81
+DEF OFFSET = $4000
+REPT 7
     section "bank{BANK_NUM}",romx[$4000],bank[{BANK_NUM}]
     incbin "gfx/fonts/font_unicode.2bpp",OFFSET,BANK_LEN
     REDEF BANK_NUM = BANK_NUM + $1

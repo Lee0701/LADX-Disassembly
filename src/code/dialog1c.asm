@@ -23,10 +23,12 @@ ExecuteDialog::
 
     ; If the character index is > 20 (i.e. past the first two lines),
     ; mask wDialogNextCharPosition around $10
-    ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
-    and  a                                        ; $2337: $A7
-    ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
-    jr   nz, .wrapPosition                        ; $233B: $20 $04
+    ; ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
+    ; and  a                                        ; $2337: $A7
+    ; ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
+    ld a, [wDialogNextCharPosition]
+    cp a, $10
+    jr   z, .wrapPosition                        ; $233B: $20 $04
     cp   $20                                      ; $233D: $FE $20
     jr   c, .writePosition                        ; $233F: $38 $04
 .wrapPosition
@@ -384,17 +386,6 @@ DialogDrawNextCharacterHandler::
     ld   a, $0F                                   ; $254C: $3E $0F
     ldi  [hl], a ; number of bytes                ; $254E: $22
     push hl                                       ; $254F: $E5
-    ld   a, [wDialogIndexHi]                      ; $2550: $FA $12 $C1
-    ld   d, a                                     ; $2553: $57
-    ld   a, [wDialogIndex]                        ; $2554: $FA $73 $C1
-    ld   e, a                                     ; $2557: $5F
-    sla  e                                        ; $2558: $CB $23
-    rl   d                                        ; $255A: $CB $12
-    ld   hl, DialogPointerTable                   ; $255C: $21 $01 $40
-    add  hl, de                                   ; $255F: $19
-    ld   a, [hli]                                 ; $2560: $2A
-    ld   e, a                                     ; $2561: $5F
-    ld   d, [hl]                                  ; $2562: $56
 
     call ReadDialogNextChar
 
@@ -505,6 +496,23 @@ ENDR
     ld   e, a                                     ; $260A: $5F
     ; ld   a, BANK(CodepointToTileMap)              ; $260B: $3E $1C
     ; ld   [rSelectROMBank], a                      ; $260D: $EA $00 $21
+
+    ; push hl
+    ld e, $00
+
+    bit 7, a
+    jr z, .singleByte
+    bit 6, a
+    jr z, .endChar
+    bit 5, a
+    jr z, .doubleByte
+    bit 4, a
+    jr z, .tripleByte
+    bit 3, a
+    jr z, .quadByte
+    jr .endChar
+
+.singleByte
     ld   hl, CodepointToTileMap                   ; $2610: $21 $41 $46
     add  hl, de                                   ; $2613: $19
     ld   e, [hl]                                  ; $2614: $5E
@@ -521,10 +529,98 @@ ENDR
     ; call ReloadSavedBank                          ; $2627: $CD $1D $08
     ld   hl, FontTiles                            ; $262A: $21 $00 $50
     add  hl, de                                   ; $262D: $19
-    ld   c, l                                     ; $262E: $4D
-    ld   b, h                                     ; $262F: $44
+    ; ld   c, l                                     ; $262E: $4D
+    ; ld   b, h                                     ; $262F: $44
+    jr .endChar
+
+.doubleByte
+    push af
+    and a, $1c
+    rrca
+    rrca
+    ld b, a
+    jr .lastByte
+
+.tripleByte
+    and a, $0f
+    rlca
+    rlca
+    rlca
+    rlca
+    ld b, a
+
+    call IncrementAndReadNextChar
+
+    push af
+    and a, $3c
+    rrca
+    rrca
+    or b
+    ld b, a
+
+    jr .lastByte
+
+.quadByte
+    and a, $07
+    rlca
+    rlca
+    ld e, a
+
+    call IncrementAndReadNextChar
+
+    push af
+    and a, $30
+    rrca
+    rrca
+    rrca
+    rrca
+    or e
+    ld e, a
+
+    pop af
+    and a, $0f
+    rlca
+    rlca
+    rlca
+    rlca
+    ld b, a
+
+    call IncrementAndReadNextChar
+    inc hl
+
+    push af
+    and a, $3c
+    rrca
+    rrca
+    or b
+    ld b, a
+
+    jr .lastByte
+
+.lastByte
+    pop af
+
+    and a, $03
+    rrca
+    rrca
+    ld c, a
+
+    call IncrementAndReadNextChar
+
+    and a, $3f
+    or c
+    ld c, a
+
+    call GetFontId
+    call GetFontOffset
+
+.endChar
+    ld b, h
+    ld c, l
     pop  hl                                       ; $2630: $E1
+    ; ld a, e
     ld   e, $10                                   ; $2631: $1E $10
+
     ; copy character tile data to wDrawCommandData
 .copyTileLoop
     push af
@@ -532,7 +628,7 @@ ENDR
     ld h, b
     ld l, c
     ; ld   a, [bc]                                  ; $2633: $0A
-    ld a, BANK(FontTiles)
+    ; ld a, BANK(FontTiles)
     call ReadByteFromBankA
     pop hl
     ldi  [hl], a                                  ; $2634: $22
@@ -551,42 +647,12 @@ ENDR
     ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
     ld   e, a                                     ; $2643: $5F
     ld   d, $00                                   ; $2644: $16 $00
-IF __DIACRITICS_SUPPORT__
-    ld   hl, CodepointToDiacritic
-    add  hl, de
-    ld   a, [hl]
-ELSE
-    xor  a                                        ; $2646: $AF
-ENDC
-    pop  hl                                       ; $2647: $E1
-    and  a                                        ; $2648: $A7
-    jr   z, .noDiacritic                          ; $2649: $28 $18
-    ld   e, a                                     ; $264B: $5F
-    ld   a, [wC175]                               ; $264C: $FA $75 $C1
-    ldi  [hl], a                                  ; $264F: $22
-    ld   a, [wC176]                               ; $2650: $FA $76 $C1
-    sub  a, $20                                   ; $2653: $D6 $20
-    ldi  [hl], a                                  ; $2655: $22
-    ld   a, $00                                   ; $2656: $3E $00
-    ldi  [hl], a                                  ; $2658: $22
-    ld   a, DIALOG_DIACRITIC_1                    ; $2659: $3E $C9
-    rr   e                                        ; $265B: $CB $1B
-    jr   c, .handleDiacriticTile                  ; $265D: $38 $01
-    dec  a ; DIALOG_DIACRITIC_2                   ; $265F: $3D
 
-.handleDiacriticTile
-    ldi  [hl], a                                  ; $2660: $22
-    ld   [hl], $00                                ; $2661: $36 $00
+    xor  a                                        ; $2646: $AF
+    pop  hl                                       ; $2647: $E1
 
 .noDiacritic
-    ld   a, [wDialogCharacterIndex]               ; $2663: $FA $70 $C1
-    ; increment character index
-    ; (add is used because inc doesn't set the carry flag)
-    add  a, $01                                   ; $2666: $C6 $01
-    ld   [wDialogCharacterIndex], a               ; $2668: $EA $70 $C1
-    ld   a, [wDialogCharacterIndexHi]             ; $266B: $FA $64 $C1
-    adc  a, $00                                   ; $266E: $CE $00
-    ld   [wDialogCharacterIndexHi], a             ; $2670: $EA $64 $C1
+    call IncrementDialogNextCharIndex
     xor  a                                        ; $2673: $AF
     ld   [wDialogIsWaitingForButtonPress], a      ; $2674: $EA $CC $C1
     ; check if we've filled the dialog box with 32 characters
@@ -595,6 +661,9 @@ ENDC
     jr   z, .dialogBoxFull                        ; $267C: $28 $10
 
 .nextCharacter
+    ld a, [wDialogNextCharPosition]
+    inc a
+    ld [wDialogNextCharPosition], a
     ld   a, [wDialogState]                        ; $267E: $FA $9F $C1
     and  $F0 ; mask DIALOG_BOX_BOTTOM_FLAG        ; $2681: $E6 $F0
     or   DIALOG_LETTER_IN_1                       ; $2683: $F6 $06
@@ -605,6 +674,76 @@ ENDC
 
 .dialogBoxFull
     jp   IncrementDialogStateAndReturn            ; $268E: $C3 $85 $24
+
+GetFontId::
+    ld a, e
+    and a, $1f
+    rlca
+    rlca
+    rlca
+    ld e, a
+    ld a, b
+    and a, $e0
+    rrca
+    rrca
+    rrca
+    rrca
+    rrca
+    or a, e
+
+    add a, BANK(gfx_font_unicode_table)
+    push af
+    sla c
+    rl b
+    ld a, b
+    and a, $3f
+    or a, $40
+    ld h, a
+    ld l, c
+    pop af
+    push af
+    
+    call ReadByteFromBankA
+    ld b, a
+    pop af
+    push af
+    inc hl
+    call ReadByteFromBankA
+    ld c, a
+    pop af
+
+    ret
+
+GetFontOffset::
+    ld a, b
+    and a, $fc
+    rrca
+    rrca
+    add a, BANK(gfx_font_unicode)
+    push af
+    ld a, b
+    and a, $03
+    ld h, a
+    ld a, c
+    ld l, a
+    pop af
+
+    sla l
+    rl h
+    sla l
+    rl h
+    sla l
+    rl h
+    sla l
+    rl h
+
+    push af
+    ld a, h
+    add a, $40
+    ld h, a
+    pop af
+    
+    ret
 
 data_2691::
     db $22, $42                                   ; $2691
