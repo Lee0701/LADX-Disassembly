@@ -342,7 +342,8 @@ include "data/codepoint_to_diacritic.asm"
 include "data/dialogs/dialog_banks.asm"
 include "code/dialog_letters.asm"
 include "text/dialog_3.asm"
-include "code/dialog1c.asm"
+include "code/bank1c_utf8.asm"
+include "code/bank1c_dialog.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
 include "text/dialog_4.asm"
@@ -574,7 +575,8 @@ section "bank3E",romx[$4000],bank[$3E]
 section "bank3F",romx[$4000],bank[$3F]
 include "text/dialog_5.asm"
 
-; Section are defined in the as file
+; Sections are defined in the asm file
+; section "bank40",romx[$4000],bank[$40]
 include "text/dialog.asm"
 
 ; Sections are defined in the asm file

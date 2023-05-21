@@ -435,7 +435,7 @@ INDEX = INDEX + 1
 ENDR
 
 .notEnd
-    cp   " "                                      ; $25BD: $FE $20
+    cp   $20                                      ; $25BD: $FE $20
     jr   z, .noSFX                                ; $25BF: $28 $1F
     push af                                       ; $25C1: $F5
     ld   a, [wDialogSFX]                          ; $25C2: $FA $AB $C5
@@ -459,7 +459,7 @@ ENDR
 
 .noSFX
     ld   d, $00                                   ; $25E0: $16 $00
-    cp   "#" ; character of player name           ; $25E2: $FE $23
+    cp   $02 ; character of player name           ; $25E2: $FE $23
     jr   nz, .notName                             ; $25E4: $20 $22
     ld   a, [wNameIndex]                          ; $25E6: $FA $08 $C1
     ld   e, a                                     ; $25E9: $5F
@@ -485,136 +485,17 @@ ENDR
     ; DialogCharmap/ASCII space ($20)
     PUSHC
     SETCHARMAP NameEntryCharmap
-    cp   " " - 1                                  ; $2602: $FE $FF
+    cp   $20 - 1                                  ; $2602: $FE $FF
     POPC
     jr   nz, .handleNameChar                      ; $2604: $20 $02
-    ld   a, " "                                   ; $2606: $3E $20
+    ld   a, $20                                   ; $2606: $3E $20
 .handleNameChar
 
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
-    ld   e, a                                     ; $260A: $5F
-
-    ; push hl
-    ld e, $00
-
-    bit 7, a
-    jr z, .singleByte
-    bit 6, a
-    jp z, .endChar
-    bit 5, a
-    jr z, .doubleByte
-    bit 4, a
-    jr z, .tripleByte
-    bit 3, a
-    jr z, .quadByte
-    jr .endChar
-
-.singleByte
-    ; Check: safe (same bank)
-    ; ld   a, BANK(CodepointToTileMap)              ; $260B: $3E $1C
-    ; ld   [rSelectROMBank], a                      ; $260D: $EA $00 $21
-    ld   hl, CodepointToTileMap                   ; $2610: $21 $41 $46
-    add  hl, de                                   ; $2613: $19
-    ld   e, [hl]                                  ; $2614: $5E
-    ld   d, $00                                   ; $2615: $16 $00
-    sla  e                                        ; $2617: $CB $23
-    rl   d                                        ; $2619: $CB $12
-    sla  e                                        ; $261B: $CB $23
-    rl   d                                        ; $261D: $CB $12
-    sla  e                                        ; $261F: $CB $23
-    rl   d                                        ; $2621: $CB $12
-    sla  e                                        ; $2623: $CB $23
-    rl   d                                        ; $2625: $CB $12
-    ; TODO: Check required
-    ; call ReloadSavedBank                          ; $2627: $CD $1D $08
-    ld a, BANK(FontTiles)
-    ld   hl, FontTiles                            ; $262A: $21 $00 $50
-    add  hl, de                                   ; $262D: $19
-    ld   c, l                                     ; $262E: $4D
-    ld   b, h                                     ; $262F: $44
-    jr .endChar
-
-.doubleByte
-    push af
-    and a, $1c
-    rrca
-    rrca
-    ld b, a
-    jr .lastByte
-
-.tripleByte
-    and a, $0f
-    rlca
-    rlca
-    rlca
-    rlca
-    ld b, a
-
-    call IncrementAndReadNextChar
-
-    push af
-    and a, $3c
-    rrca
-    rrca
-    or b
-    ld b, a
-
-    jr .lastByte
-
-.quadByte
-    and a, $07
-    rlca
-    rlca
-    ld e, a
-
-    call IncrementAndReadNextChar
-
-    push af
-    and a, $30
-    rrca
-    rrca
-    rrca
-    rrca
-    or e
-    ld e, a
-
-    pop af
-    and a, $0f
-    rlca
-    rlca
-    rlca
-    rlca
-    ld b, a
-
-    call IncrementAndReadNextChar
-    inc hl
-
-    push af
-    and a, $3c
-    rrca
-    rrca
-    or b
-    ld b, a
-
-    jr .lastByte
-
-.lastByte
-    pop af
-
-    and a, $03
-    rrca
-    rrca
-    ld c, a
-
-    call IncrementAndReadNextChar
-
-    and a, $3f
-    or c
-    ld c, a
-
-    call GetFontId
-    call GetFontOffset
+    ; ld   e, a                                     ; $260A: $5F
+    call DialogUTF8Char
+    call GetFontAddr
 
 .endChar
     ld b, h
@@ -676,76 +557,6 @@ ENDR
 
 .dialogBoxFull
     jp   IncrementDialogStateAndReturn            ; $268E: $C3 $85 $24
-
-GetFontId::
-    ld a, e
-    and a, $1f
-    rlca
-    rlca
-    rlca
-    ld e, a
-    ld a, b
-    and a, $e0
-    rrca
-    rrca
-    rrca
-    rrca
-    rrca
-    or a, e
-
-    add a, BANK(gfx_font_unicode_table)
-    push af
-    sla c
-    rl b
-    ld a, b
-    and a, $3f
-    or a, $40
-    ld h, a
-    ld l, c
-    pop af
-    push af
-    
-    call ReadByteFromBankA
-    ld b, a
-    pop af
-    push af
-    inc hl
-    call ReadByteFromBankA
-    ld c, a
-    pop af
-
-    ret
-
-GetFontOffset::
-    ld a, b
-    and a, $fc
-    rrca
-    rrca
-    add a, BANK(gfx_font_unicode)
-    push af
-    ld a, b
-    and a, $03
-    ld h, a
-    ld a, c
-    ld l, a
-    pop af
-
-    sla l
-    rl h
-    sla l
-    rl h
-    sla l
-    rl h
-    sla l
-    rl h
-
-    push af
-    ld a, h
-    add a, $40
-    ld h, a
-    pop af
-    
-    ret
 
 data_2691::
     db $22, $42                                   ; $2691

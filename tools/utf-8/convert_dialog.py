@@ -4,6 +4,10 @@ import sys
 line_prefix = '    db '
 base_bank = 0x40
 
+text_end = 0x00
+text_end_ask = 0x01
+player_name = 0x02
+
 replacements = {
     "<dpad>": 0xe006,
     "<letter>": 0xe007,
@@ -43,10 +47,13 @@ def process_line(line):
     line_content = line.replace(line_prefix, '')[1:-1]
     line_content = replace_icons(line_content)
     utf8 = line_content.encode('utf-8')
+    if ord('#') in utf8:
+        utf8 = [player_name if c == ord('#') else c for c in list(utf8)]
+        utf8 = bytes(utf8)
     if line_content.endswith('<ask>'):
-        utf8 = utf8[:-5] + bytes([0x01])
+        utf8 = utf8[:-5] + bytes([text_end_ask])
     if line_content.endswith('@'):
-        utf8 = utf8[:-1] + bytes([0x00])
+        utf8 = utf8[:-1] + bytes([text_end])
     return line_prefix + ', '.join(['$' + hex(c)[2:].zfill(2) for c in utf8])
 
 def make_sections(lines):
