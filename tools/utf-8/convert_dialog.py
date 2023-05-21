@@ -4,16 +4,50 @@ import sys
 line_prefix = '    db '
 base_bank = 0x40
 
+replacements = {
+    "<dpad>": 0xe006,
+    "<letter>": 0xe007,
+    "<yoshi>": 0xe008,
+    "<flower>": 0xe009,
+    "<footprint>": 0xe00a,
+    "Ｘ": 0xe00b,
+    "<skull>": 0xe00c,
+    "<link>": 0xe00d,
+    "<marin>": 0xe00e,
+    "<tarin>": 0xe00f,
+    "<ribbon>": 0xe010,
+    "<dogfood>": 0xe011,
+    "<bananas>": 0xe012,
+    "<stick>": 0xe013,
+    "<honeycomb>": 0xe014,
+    "<pineapple>": 0xe015,
+    "<broom>": 0xe016,
+    "<fishhook>": 0xe017,
+    "<bra>": 0xe018,
+    "<scale>": 0xe01b,
+    "<glass>": 0xe01c,
+    "<up>": 0xe01b,
+    "<down>": 0xe01c,
+    "<left>": 0xe01d,
+    "<right>": 0xe01e,
+}
+
+def replace_icons(text):
+    for icon, replacement in replacements.items():
+        text = text.replace(icon, chr(replacement))
+    return text
+
 def process_line(line):
     if not line.startswith(line_prefix):
         return line
     line_content = line.replace(line_prefix, '')[1:-1]
+    line_content = replace_icons(line_content)
     utf8 = line_content.encode('utf-8')
     if line_content.endswith('<ask>'):
         utf8 = utf8[:-5] + bytes([0x01])
     if line_content.endswith('@'):
         utf8 = utf8[:-1] + bytes([0x00])
-    return line_prefix + ', '.join(['$' + hex(c)[2:] for c in utf8])
+    return line_prefix + ', '.join(['$' + hex(c)[2:].zfill(2) for c in utf8])
 
 def make_sections(lines):
     sections = []

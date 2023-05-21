@@ -12,7 +12,7 @@ first_bank = int(sys.argv[3], 16)
 offset = int(sys.argv[4], 16)
 
 chars = re.sub(r'\s', '', chars)
-chars = re.sub(r'\\u([0-9a-fA-F]{1,5})', lambda x: chr(int(x.group(1))), chars)
+chars = re.sub(r'\\u([0-9a-fA-F]{1,5})', lambda x: chr(int(x.group(1), 16)), chars)
 
 table = [0 for i in range(0x40000)]
 for (i, c) in enumerate(list(chars)):

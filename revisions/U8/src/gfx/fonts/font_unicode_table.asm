@@ -1,7 +1,7 @@
 
 section "bank50",romx[$4000],bank[$50]
 gfx_font_unicode_table::
-	db $00, $ff
+	db $1a, $ff
 	db $00, $00
 	db $00, $00
 	db $00, $00
@@ -21,7 +21,6 @@ gfx_font_unicode_table::
 	db $00, $00
 	db $00, $00
 	db $00, $00
-	db $00, $01
 	db $00, $00
 	db $00, $00
 	db $00, $00
@@ -34,6 +33,7 @@ gfx_font_unicode_table::
 	db $00, $00
 	db $00, $00
 	db $00, $00
+	db $00, $01 ; U+0020  
 	db $00, $02 ; U+0021 !
 	db $00, $03 ; U+0022 "
 	db $00, $04 ; U+0023 #
@@ -57352,38 +57352,38 @@ section "bank56",romx[$4000],bank[$56]
 	db $00, $00
 	db $00, $00
 section "bank57",romx[$4000],bank[$57]
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
-	db $00, $00
+	db $00, $e0 ; U+e000 
+	db $00, $e1 ; U+e001 
+	db $00, $e2 ; U+e002 
+	db $00, $e3 ; U+e003 
+	db $00, $e4 ; U+e004 
+	db $00, $e5 ; U+e005 
+	db $00, $e6 ; U+e006 
+	db $00, $e7 ; U+e007 
+	db $00, $e8 ; U+e008 
+	db $00, $e9 ; U+e009 
+	db $00, $ea ; U+e00a 
+	db $00, $eb ; U+e00b 
+	db $00, $ec ; U+e00c 
+	db $00, $ed ; U+e00d 
+	db $00, $ee ; U+e00e 
+	db $00, $ef ; U+e00f 
+	db $00, $f0 ; U+e010 
+	db $00, $f1 ; U+e011 
+	db $00, $f2 ; U+e012 
+	db $00, $f3 ; U+e013 
+	db $00, $f4 ; U+e014 
+	db $00, $f5 ; U+e015 
+	db $00, $f6 ; U+e016 
+	db $00, $f7 ; U+e017 
+	db $00, $f8 ; U+e018 
+	db $00, $f9 ; U+e019 
+	db $00, $fa ; U+e01a 
+	db $00, $fb ; U+e01b 
+	db $00, $fc ; U+e01c 
+	db $00, $fd ; U+e01d 
+	db $00, $fe ; U+e01e 
+	db $00, $ff ; U+e01f 
 	db $00, $00
 	db $00, $00
 	db $00, $00
