@@ -262,7 +262,6 @@ include "data/maps/layouts.asm"
 include "data/chests/chests.asm"
 include "code/bank14.asm"
 include "text/dialog_1.asm"
-include "text/dialog_200.asm"
 
 section "bank15",romx[$4000],bank[$15]
 include "code/entities/bank15.asm"
@@ -347,7 +346,6 @@ include "code/dialog1c.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
 include "text/dialog_4.asm"
-include "text/dialog_100.asm"
 
 section "bank1E", romx[$4000], bank[$1E]
 include "code/audio/music_2.asm"
@@ -572,11 +570,12 @@ include "code/photos_bg.asm"
 ; Unused banks; make blank sections so they are filled with $00 instead of $ff to match
 ; the rom
 section "bank3E",romx[$4000],bank[$3E]
-include "text/dialog_000.asm"
 
 section "bank3F",romx[$4000],bank[$3F]
-include "text/dialog_080.asm"
 include "text/dialog_5.asm"
+
+; Section are defined in the as file
+include "text/dialog.asm"
 
 ; Sections are defined in the asm file
 ; section "bank50",romx[$4000],bank[$50]

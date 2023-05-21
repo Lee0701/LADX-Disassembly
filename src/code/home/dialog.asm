@@ -86,29 +86,6 @@ ReadDialogNextChar::
     ld   e, a                                     ; $2561: $5F
     ld   d, [hl]                                  ; $2562: $56
 
-IF __USE_FIXED_DIALOG_BANKS__
-    ld   l, e
-    ld   h, d
-    ld   a, [wDialogIndexHi]
-    and  a
-    jr   z, .dialog0xx
-    ld   e,  BANK(Dialog100)
-    cp   $01
-    jr   z, .foundBank
-    ld   e,  BANK(Dialog200)
-    jr .foundBank
-
-.dialog0xx
-    ld   e, BANK(Dialog080)
-    ld a, [wDialogIndex]
-    cp $80
-    jr nc, .foundBank
-    ld   e, BANK(Dialog000)
-
-.foundBank
-    ld   a, e
-    ld   [rSelectROMBank], a
-ELSE
     push de                                       ; $2563: $D5
     ld   a, [wDialogIndex]                        ; $2564: $FA $73 $C1
     ld   e, a                                     ; $2567: $5F
@@ -118,10 +95,10 @@ ELSE
     add  hl, de                                   ; $256F: $19
     ld   a, [hl] ; bank                           ; $2570: $7E
     ; Mask out DIALOG_UNSKIPPABLE flag
-    and  $3F                                      ; $2571: $E6 $3F
+    and  $7F                                      ; $2571: $E6 $3F
     ld   [rSelectROMBank], a                      ; $2573: $EA $00 $21
     pop  hl                                       ; $2576: $E1
-ENDC
+
     ld   a, [wDialogCharacterIndex]               ; $2577: $FA $70 $C1
     ld   e, a                                     ; $257A: $5F
     ld   a, [wDialogCharacterIndexHi]             ; $257B: $FA $64 $C1
