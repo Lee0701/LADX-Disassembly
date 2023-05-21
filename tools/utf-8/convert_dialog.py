@@ -4,17 +4,16 @@ import sys
 line_prefix = '    db '
 base_bank = 0x40
 
-def format_char(c):
-    if c == ord('@'):
-        return 'ff'
-    return hex(c)[2:]
-
 def process_line(line):
     if not line.startswith(line_prefix):
         return line
     line_content = line.replace(line_prefix, '')[1:-1]
-    line_content = line_content.encode('utf-8')
-    return line_prefix + ', '.join(['$' + format_char(c) for c in line_content])
+    utf8 = line_content.encode('utf-8')
+    if line_content.endswith('<ask>'):
+        utf8 = utf8[:-5] + bytes([0x01])
+    if line_content.endswith('@'):
+        utf8 = utf8[:-1] + bytes([0x00])
+    return line_prefix + ', '.join(['$' + hex(c)[2:] for c in utf8])
 
 def make_sections(lines):
     sections = []

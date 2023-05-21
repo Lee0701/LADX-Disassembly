@@ -390,7 +390,7 @@ DialogDrawNextCharacterHandler::
     call ReadDialogNextChar
 
     ldh  [hMultiPurpose0], a                      ; $258A: $E0 $D7
-    cp   "<ask>" ; $fe                            ; $258C: $FE $FE
+    cp   $01 ; $fe                            ; $258C: $FE $FE
     jr   nz, .notChoice                           ; $258E: $20 $14
     pop  hl                                       ; $2590: $E1
     xor  a                                        ; $2591: $AF
@@ -409,7 +409,7 @@ DialogDrawNextCharacterHandler::
     ret                                           ; $25A3: $C9
 
 .notChoice
-    cp   "@" ; $ff                                ; $25A4: $FE $FF
+    cp   $00 ; $ff                                ; $25A4: $FE $FF
     jr   nz, .notEnd                              ; $25A6: $20 $15
     pop  hl                                       ; $25A8: $E1
     xor  a                                        ; $25A9: $AF
@@ -764,9 +764,9 @@ DialogBreakHandler::
     and  $1F                                      ; $2698: $E6 $1F
     jr   nz, .jp_26E1                             ; $269A: $20 $45
     ld   a, [wDialogNextChar]                     ; $269C: $FA $C3 $C3
-    cp   "@"                                      ; $269F: $FE $FF
+    cp   $00                                      ; $269F: $FE $FF
     jp   z, DialogDrawNextCharacterHandler.end    ; $26A1: $CA $AD $25
-    cp   "<ask>"                                  ; $26A4: $FE $FE
+    cp   $01                                  ; $26A4: $FE $FE
     jp   z, DialogDrawNextCharacterHandler.choice ; $26A6: $CA $95 $25
     ld   a, [wDialogIsWaitingForButtonPress]      ; $26A9: $FA $CC $C1
     and  a                                        ; $26AC: $A7
