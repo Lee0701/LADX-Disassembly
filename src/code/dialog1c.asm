@@ -494,8 +494,6 @@ ENDR
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
     ld   e, a                                     ; $260A: $5F
-    ; ld   a, BANK(CodepointToTileMap)              ; $260B: $3E $1C
-    ; ld   [rSelectROMBank], a                      ; $260D: $EA $00 $21
 
     ; push hl
     ld e, $00
@@ -503,7 +501,7 @@ ENDR
     bit 7, a
     jr z, .singleByte
     bit 6, a
-    jr z, .endChar
+    jp z, .endChar
     bit 5, a
     jr z, .doubleByte
     bit 4, a
@@ -513,6 +511,9 @@ ENDR
     jr .endChar
 
 .singleByte
+    ; Check: safe (same bank)
+    ; ld   a, BANK(CodepointToTileMap)              ; $260B: $3E $1C
+    ; ld   [rSelectROMBank], a                      ; $260D: $EA $00 $21
     ld   hl, CodepointToTileMap                   ; $2610: $21 $41 $46
     add  hl, de                                   ; $2613: $19
     ld   e, [hl]                                  ; $2614: $5E
@@ -527,10 +528,11 @@ ENDR
     rl   d                                        ; $2625: $CB $12
     ; TODO: Check required
     ; call ReloadSavedBank                          ; $2627: $CD $1D $08
+    ld a, BANK(FontTiles)
     ld   hl, FontTiles                            ; $262A: $21 $00 $50
     add  hl, de                                   ; $262D: $19
-    ; ld   c, l                                     ; $262E: $4D
-    ; ld   b, h                                     ; $262F: $44
+    ld   c, l                                     ; $262E: $4D
+    ld   b, h                                     ; $262F: $44
     jr .endChar
 
 .doubleByte
