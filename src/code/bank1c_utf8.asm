@@ -1,4 +1,10 @@
 
+macro read_next_byte_with_preserving_de
+    pop de
+    call ReadNextByte
+    push de
+endm
+
 ; param l: mode ($00 = dialog, $01 = tile)
 ; return h: codepoint, highest 1 byte
 ; return bc: codepoint, lower 2 bytes
@@ -22,18 +28,18 @@ GetUTF8Char::
 
 .quadByte
     call PreQuadByte
-    call ReadNextByte
+    read_next_byte_with_preserving_de
     push af
     call MidQuadByte1
     pop af
     call MidQuadByte2
-    call ReadNextByte
+    read_next_byte_with_preserving_de
     push af
     call PostQuadByte
     jr .lastByte
 .tripleByte
     call PreTripleByte
-    call ReadNextByte
+    read_next_byte_with_preserving_de
     push af
     call PostTripleByte
     jr .lastByte
@@ -44,7 +50,7 @@ GetUTF8Char::
 .lastByte
     pop af
     call PreLastByte
-    call ReadNextByte
+    read_next_byte_with_preserving_de
     call PostLastByte
     jr .endUTF8
 .singleByte
@@ -96,8 +102,8 @@ MidQuadByte1::
     rrca
     rrca
     rrca
-    or e
-    ld e, a
+    or h
+    ld h, a
     ret
 
 MidQuadByte2::
@@ -137,6 +143,7 @@ ReadNextByte::
     jr z, .dialog
     cp a, $01
     jr z, .file_menu
+    ; safety
     pop af
     ret
 
@@ -147,10 +154,8 @@ ReadNextByte::
 
 .file_menu
     pop af
-    pop de
     ldh  a, [hMultiPurpose0]
     call FileMenuNextChar
-    push de
     ret
 
 GetFontAddr::
@@ -158,16 +163,16 @@ GetFontAddr::
     call GetFontOffset
     ret
 
-; param e: codepoint, highest 1 byte
+; param h: codepoint, highest 1 byte
 ; param bc: codepoint, lower 2 bytes
 GetFontId::
     ; calculate bank number
-    ld a, e
+    ld a, h
     and a, $1f
     rlca
     rlca
     rlca
-    ld e, a
+    ld h, a
     ld a, b
     and a, $e0
     rrca
@@ -175,7 +180,7 @@ GetFontId::
     rrca
     rrca
     rrca
-    or a, e
+    or a, h
 
     add a, BANK(gfx_font_unicode_table)
     push af

@@ -792,18 +792,35 @@ FileMenuNextChar::
     ret
 
 ReadTileValueFromUTF8Table::
+    push af
     ld a, BANK(GetUTF8Char)
     ld [rSelectROMBank], a
     ld l, $01
+    pop af
     call GetUTF8Char
-    push de
     call GetFontAddr
+    push af
+    ld a, e
+    sub a, LOW(wSaveSlotNames)
+
+    ld b, h
+    ld c, l
+    ld h, $94
+    ld l, a
+    sla l
+    sla l
+    sla l
+    sla l
+
+    pop af
+    push de
+    call CopyTile
     pop de
-    ldh a, [hMultiPurpose0]
-    ld b, a
-    ld a, NAME_LENGTH
-    sub a, b
+
+    ld a, e
+    sub a, LOW(wSaveSlotNames)
     add a, $40
+
     ld hl, rSelectROMBank
     ld [hl], $01
     ret

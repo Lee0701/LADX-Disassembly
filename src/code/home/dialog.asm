@@ -133,11 +133,12 @@ ReadByteFromBankA::
     pop bc
     ret
 
+; param a: bank number to read from
 ; param bc: address to read from
 ; param hl: address to copy to
-; param e: number of bytes to copy
 CopyTile::
     ; copy character tile data to wDrawCommandData
+    ld e, $10
 .copyTileLoop
     push af
     push hl

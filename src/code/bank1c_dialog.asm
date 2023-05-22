@@ -505,7 +505,7 @@ ENDR
     pop  hl                                       ; $2630: $E1
 
     ; ld a, e
-    ld   e, $10                                   ; $2631: $1E $10
+    ; ld   e, $10                                   ; $2631: $1E $10
     call CopyTile
     ld   [hl], $00                                ; $2639: $36 $00
     push hl                                       ; $263B: $E5
