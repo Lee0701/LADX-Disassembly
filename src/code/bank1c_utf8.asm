@@ -1,8 +1,12 @@
 
 ; param l: mode ($00 = dialog, $01 = tile)
+; return h: codepoint, highest 1 byte
+; return bc: codepoint, lower 2 bytes
 GetUTF8Char::
+    ; required for '.file_menu' mode
     push de
     ld e, $00
+    ld h, $00
 
     bit 7, a
     jr z, .singleByte
@@ -83,7 +87,7 @@ PreQuadByte::
     and a, $07
     rlca
     rlca
-    ld e, a
+    ld h, a
     ret
 
 MidQuadByte1::
@@ -139,6 +143,7 @@ ReadNextByte::
 .dialog
     pop af
     jp IncrementAndReadNextChar
+    ret
 
 .file_menu
     pop af
@@ -153,7 +158,10 @@ GetFontAddr::
     call GetFontOffset
     ret
 
+; param e: codepoint, highest 1 byte
+; param bc: codepoint, lower 2 bytes
 GetFontId::
+    ; calculate bank number
     ld a, e
     and a, $1f
     rlca

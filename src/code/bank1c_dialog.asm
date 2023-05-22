@@ -494,8 +494,9 @@ ENDR
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
     ; ld   e, a                                     ; $260A: $5F
-    ld e, 0
+    ld l, $00
     call GetUTF8Char
+    ld e, h
     call GetFontAddr
 
 .endChar
