@@ -814,7 +814,15 @@ ReadTileValueFromUTF8Table::
 
     pop af
     push de
+
+    push af
+.wait
+    ld a, [rLY]
+    cp SCRN_Y + 1
+    jr nz, .wait
+    pop af
     call CopyTile
+    ; call AppendDrawCommand
     pop de
 
     ld a, e

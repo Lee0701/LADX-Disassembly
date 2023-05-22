@@ -867,3 +867,25 @@ DialogOpenAnimationStart::
     ld   a, BANK(@)                               ; $54A4: $3E $14
     ld   [wFarcallReturnBank], a                  ; $54A6: $EA $04 $DE
     jp   Farcall                                  ; $54A9: $C3 $D7 $0B
+
+; param a: bank number to read from
+; param bc: address to read from
+; param hl: address to copy to
+CopyTile::
+    ; copy character tile data to wDrawCommandData
+    ld e, $10
+.copyTileLoop
+    push af
+    push hl
+    ld h, b
+    ld l, c
+    ; ld   a, [bc]                                  ; $2633: $0A
+    ; ld a, BANK(FontTiles)
+    call ReadByteFromBankA
+    pop hl
+    ldi  [hl], a                                  ; $2634: $22
+    pop af
+    inc  bc                                       ; $2635: $03
+    dec  e                                        ; $2636: $1D
+    jr   nz, .copyTileLoop                        ; $2637: $20 $FA
+    ret

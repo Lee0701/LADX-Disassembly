@@ -136,21 +136,31 @@ ReadByteFromBankA::
 ; param a: bank number to read from
 ; param bc: address to read from
 ; param hl: address to copy to
-CopyTile::
-    ; copy character tile data to wDrawCommandData
+AppendDrawCommand::
+    push bc
+    push de
+    ld [rSelectROMBank], a
+
+    ld a, [wDrawCommandsSize]
+    ld e, a
+    add $10
+    ld [wDrawCommandsSize], a
+    ld d, $00
+    ld hl, wDrawCommand
+    add hl, de
     ld e, $10
-.copyTileLoop
-    push af
-    push hl
-    ld h, b
-    ld l, c
-    ; ld   a, [bc]                                  ; $2633: $0A
-    ; ld a, BANK(FontTiles)
-    call ReadByteFromBankA
-    pop hl
-    ldi  [hl], a                                  ; $2634: $22
-    pop af
-    inc  bc                                       ; $2635: $03
-    dec  e                                        ; $2636: $1D
-    jr   nz, .copyTileLoop                        ; $2637: $20 $FA
+
+.appendDrawCommand_loop
+    ld a, [bc]
+    inc bc
+    ldi [hl], a
+    dec e
+    jr nz, .appendDrawCommand_loop
+
+    ld [hl], $00
+
+    ld a, $01
+    ld [rSelectROMBank], a
+    pop de
+    pop bc
     ret
