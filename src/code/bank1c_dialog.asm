@@ -495,7 +495,7 @@ ENDR
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
     ; ld   e, a                                     ; $260A: $5F
     ld e, 0
-    call DialogUTF8Char
+    call GetUTF8Char
     call GetFontAddr
 
 .endChar
@@ -503,27 +503,9 @@ ENDR
     ld c, l
     pop  hl                                       ; $2630: $E1
 
-; param hl: address to copy to
-; param e: number of bytes to copy
-CopyTile::
     ; ld a, e
     ld   e, $10                                   ; $2631: $1E $10
-
-    ; copy character tile data to wDrawCommandData
-.copyTileLoop
-    push af
-    push hl
-    ld h, b
-    ld l, c
-    ; ld   a, [bc]                                  ; $2633: $0A
-    ; ld a, BANK(FontTiles)
-    call ReadByteFromBankA
-    pop hl
-    ldi  [hl], a                                  ; $2634: $22
-    pop af
-    inc  bc                                       ; $2635: $03
-    dec  e                                        ; $2636: $1D
-    jr   nz, .copyTileLoop                        ; $2637: $20 $FA
+    call CopyTile
     ld   [hl], $00                                ; $2639: $36 $00
     push hl                                       ; $263B: $E5
 

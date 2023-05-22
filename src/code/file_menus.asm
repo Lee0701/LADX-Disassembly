@@ -124,9 +124,10 @@ DrawSaveSlotName::
     dec  a                                        ; $4876: $3D
     push bc                                       ; $4877: $C5
     push hl                                       ; $4878: $E5
-    ld   c, a                                     ; $4879: $4F
-    ld   b, $00                                   ; $487A: $06 $00
-    call ReadTileValueFromAsciiTable              ; $487C: $CD $25 $0C
+    ; ld   c, a                                     ; $4879: $4F
+    ; ld   b, $00                                   ; $487A: $06 $00
+    ; call ReadTileValueFromAsciiTable              ; $487C: $CD $25 $0C
+    call ReadTileValueFromUTF8Table
     pop  hl                                       ; $487F: $E1
     pop  bc                                       ; $4880: $C1
 

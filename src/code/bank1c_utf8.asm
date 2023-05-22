@@ -1,6 +1,7 @@
 
-DialogUTF8Char::
-    ld l, e
+; param l: mode ($00 = dialog, $01 = tile)
+GetUTF8Char::
+    push de
     ld e, $00
 
     bit 7, a
@@ -15,32 +16,20 @@ DialogUTF8Char::
     jr z, .quadByte
     jr .endUTF8
 
-.readNextByte
-    push af
-    ld a, l
-    and a
-    jr z, .dialog
-    pop af
-    ret
-
-.dialog
-    pop af
-    jp IncrementAndReadNextChar
-
 .quadByte
     call PreQuadByte
-    call .readNextByte
+    call ReadNextByte
     push af
     call MidQuadByte1
     pop af
     call MidQuadByte2
-    call .readNextByte
+    call ReadNextByte
     push af
     call PostQuadByte
     jr .lastByte
 .tripleByte
     call PreTripleByte
-    call .readNextByte
+    call ReadNextByte
     push af
     call PostTripleByte
     jr .lastByte
@@ -51,12 +40,13 @@ DialogUTF8Char::
 .lastByte
     pop af
     call PreLastByte
-    call .readNextByte
+    call ReadNextByte
     call PostLastByte
     jr .endUTF8
 .singleByte
     call SingleByte
 .endUTF8
+    pop de
     ret
 
 SingleByte::
@@ -134,6 +124,28 @@ PostLastByte::
     and a, $3f
     or c
     ld c, a
+    ret
+
+ReadNextByte::
+    push af
+    ld a, l
+    and a
+    jr z, .dialog
+    cp a, $01
+    jr z, .file_menu
+    pop af
+    ret
+
+.dialog
+    pop af
+    jp IncrementAndReadNextChar
+
+.file_menu
+    pop af
+    pop de
+    ldh  a, [hMultiPurpose0]
+    call FileMenuNextChar
+    push de
     ret
 
 GetFontAddr::

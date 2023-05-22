@@ -132,3 +132,24 @@ ReadByteFromBankA::
     ld a, b
     pop bc
     ret
+
+; param bc: address to read from
+; param hl: address to copy to
+; param e: number of bytes to copy
+CopyTile::
+    ; copy character tile data to wDrawCommandData
+.copyTileLoop
+    push af
+    push hl
+    ld h, b
+    ld l, c
+    ; ld   a, [bc]                                  ; $2633: $0A
+    ; ld a, BANK(FontTiles)
+    call ReadByteFromBankA
+    pop hl
+    ldi  [hl], a                                  ; $2634: $22
+    pop af
+    inc  bc                                       ; $2635: $03
+    dec  e                                        ; $2636: $1D
+    jr   nz, .copyTileLoop                        ; $2637: $20 $FA
+    ret

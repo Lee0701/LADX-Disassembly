@@ -786,12 +786,36 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
+FileMenuNextChar::
+    inc de
+    ld a, [de]
+    ret
+
+ReadTileValueFromUTF8Table::
+    ld a, BANK(GetUTF8Char)
+    ld [rSelectROMBank], a
+    ld l, $01
+    call GetUTF8Char
+    push de
+    call GetFontAddr
+    pop de
+    ldh a, [hMultiPurpose0]
+    ld b, a
+    ld a, NAME_LENGTH
+    sub a, b
+    add a, $40
+    ld hl, rSelectROMBank
+    ld [hl], $01
+    ret
+
 ReadTileValueFromAsciiTable::
     ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
     jr   ReadValueInDialogsBank                   ; $0C28: $18 $03
 
 ReadTileValueFromDiacriticsTable::
-    ld   hl, CodepointToDiacritic                 ; $0C2A: $21 $41 $47
+    ; ld   hl, CodepointToDiacritic                 ; $0C2A: $21 $41 $47
+    ld a, $00
+    ret
 
 ReadValueInDialogsBank::
     ld   a, BANK(CodepointToTileMap) ; or BANK(DialogBankTable) ; $0C2D: $3E $1C
