@@ -494,6 +494,7 @@ ENDR
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
     ; ld   e, a                                     ; $260A: $5F
+    ld e, 0
     call DialogUTF8Char
     call GetFontAddr
 
@@ -501,6 +502,10 @@ ENDR
     ld b, h
     ld c, l
     pop  hl                                       ; $2630: $E1
+
+; param hl: address to copy to
+; param e: number of bytes to copy
+CopyTile::
     ; ld a, e
     ld   e, $10                                   ; $2631: $1E $10
 

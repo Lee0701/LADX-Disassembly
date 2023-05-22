@@ -1,5 +1,6 @@
 
 DialogUTF8Char::
+    ld l, e
     ld e, $00
 
     bit 7, a
@@ -14,31 +15,43 @@ DialogUTF8Char::
     jr z, .quadByte
     jr .endUTF8
 
+.readNextByte
+    push af
+    ld a, l
+    and a
+    jr z, .dialog
+    pop af
+    ret
+
+.dialog
+    pop af
+    jp IncrementAndReadNextChar
+
 .quadByte
     call PreQuadByte
-    call IncrementAndReadNextChar
+    call .readNextByte
     push af
     call MidQuadByte1
     pop af
     call MidQuadByte2
-    call IncrementAndReadNextChar
+    call .readNextByte
     push af
     call PostQuadByte
     jr .lastByte
 .tripleByte
     call PreTripleByte
-    call IncrementAndReadNextChar
+    call .readNextByte
     push af
     call PostTripleByte
     jr .lastByte
 .doubleByte
     push af
     call DoubleByte
-    jr .endUTF8
+    jr .lastByte
 .lastByte
     pop af
     call PreLastByte
-    call IncrementAndReadNextChar
+    call .readNextByte
     call PostLastByte
     jr .endUTF8
 .singleByte
@@ -103,7 +116,6 @@ MidQuadByte2::
     ret
 
 PostQuadByte::
-    inc hl
     and a, $3c
     rrca
     rrca
