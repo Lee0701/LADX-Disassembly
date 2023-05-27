@@ -2,8 +2,10 @@
 import sys
 import yaml
 
-def group_n_elements(L, n):
-    return [tuple(L[i:i+n]) for i in range(0, len(L), n)]
+def convert_char(c):
+    if c == '@':
+        return '\0'
+    return c
 
 def main(input_file, output_file):
     with open(input_file, 'r') as f:
@@ -13,7 +15,8 @@ def main(input_file, output_file):
     for key, value in content.items():
         result.append(key + '::')
         for line in value.split('\n'):
-            chars = list(line.encode('utf-8'))
+            chars = ''.join([convert_char(c) for c in line])
+            chars = list(chars.encode('utf-8'))
             if len(chars) == 0:
                 continue
             chars = ['$%02x' % c for c in chars]
