@@ -54,7 +54,7 @@ def process_line(line):
         utf8 = utf8[:-5] + bytes([text_end_ask])
     if line_content.endswith('@'):
         utf8 = utf8[:-1] + bytes([text_end])
-    return line_prefix + ', '.join(['$' + hex(c)[2:].zfill(2) for c in utf8])
+    return line_prefix + ', '.join(['$%02x' % c for c in utf8])
 
 def make_sections(lines):
     sections = []
