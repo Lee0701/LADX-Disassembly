@@ -158,14 +158,14 @@ azle-r2_FXFLAGS = --rom-version 2 --non-japanese --title "ZELDA" --game-id "AZLE
 #
 
 # By default, build the US 1.0 revision.
-build: azle.gbc
+build: azlu-r2.gbc
 
 # Build all revisions.
 build-all: $(games)
 
 # Test the default revision.
 test: build
-	@tools/compare.sh ladx.md5 azle.gbc
+	@tools/compare.sh ladx.md5 azlu-r2.gbc
 
 # Test all revisions.
 test-all: build-all
