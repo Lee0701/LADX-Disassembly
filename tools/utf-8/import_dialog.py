@@ -5,7 +5,12 @@ import yaml
 def convert_char(c):
     if c == '@':
         return '\0'
-    return c
+    elif c =='%':
+        return '\x01'
+    elif c == '#':
+        return '\x02'
+    else:
+        return c
 
 def main(input_file, output_file):
     with open(input_file, 'r') as f:
