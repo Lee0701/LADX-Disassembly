@@ -489,7 +489,26 @@ ENDR
     POPC
     jr   nz, .handleNameChar                      ; $2604: $20 $02
     ld   a, $20                                   ; $2606: $3E $20
+
 .handleNameChar
+    push de
+    ld hl, NameToUTF8
+    ld d, $00
+    ld e, a
+    sla e
+    rl d
+    sla e
+    rl d
+    add hl, de
+    ld d, h
+    ld e, l
+    ld a, [de]
+    ld l, $01
+    call GetUTF8Char
+    ld e, h
+    call GetFontAddr
+    pop de
+    jr .endChar
 
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
