@@ -527,21 +527,19 @@ ENDR
     ; ld   e, $10                                   ; $2631: $1E $10
     call CopyTile
     ld   [hl], $00                                ; $2639: $36 $00
-    push hl                                       ; $263B: $E5
+    ; push hl                                       ; $263B: $E5
 
     ; Check if the current character has a diacritic tile above
     ; (if compiled with support for diacritics)
     ; Check: safe (same bank)
     ; ld   a, BANK(CodepointToDiacritic)            ; $263C: $3E $1C
     ; ld   [rSelectROMBank], a ; current character  ; $263E: $EA $00 $21
-    ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
-    ld   e, a                                     ; $2643: $5F
-    ld   d, $00                                   ; $2644: $16 $00
+    ; ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
+    ; ld   e, a                                     ; $2643: $5F
+    ; ld   d, $00                                   ; $2644: $16 $00
+    ; xor  a                                        ; $2646: $AF
+    ; pop  hl                                       ; $2647: $E1
 
-    xor  a                                        ; $2646: $AF
-    pop  hl                                       ; $2647: $E1
-
-.noDiacritic
     call IncrementDialogNextCharIndex
     xor  a                                        ; $2673: $AF
     ld   [wDialogIsWaitingForButtonPress], a      ; $2674: $EA $CC $C1

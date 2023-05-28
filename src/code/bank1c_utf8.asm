@@ -149,7 +149,7 @@ ReadNextByte::
 
 .dialog
     pop af
-    jp IncrementAndReadNextChar
+    call IncrementAndReadNextChar
     ret
 
 .file_menu
@@ -217,7 +217,6 @@ GetFontOffset::
     ld h, a
     ld a, c
     ld l, a
-    pop af
 
     sla l
     rl h
@@ -228,7 +227,6 @@ GetFontOffset::
     sla l
     rl h
 
-    push af
     ld a, h
     add a, $40
     ld h, a

@@ -119,7 +119,7 @@ ReadDialogNextChar::
     pop hl
     ret
 
-;;
+; Read a byte from bank a, offset hl.
 ; Can only be called from bank $1c.
 ReadByteFromBankA::
     push bc
