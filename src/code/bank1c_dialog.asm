@@ -23,9 +23,9 @@ ExecuteDialog::
 
     ; If the character index is > 20 (i.e. past the first two lines),
     ; mask wDialogNextCharPosition around $10
-    ; ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
-    ; and  a                                        ; $2337: $A7
-    ; ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
+    ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
+    and  a                                        ; $2337: $A7
+    ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
     ld a, [wDialogNextCharPosition]
     cp a, $10
     jr   z, .wrapPosition                        ; $233B: $20 $04
@@ -349,7 +349,7 @@ DialogLetterAnimationEndHandler::
     xor  a                                        ; $2513: $AF
     ldi  [hl], a                                  ; $2514: $22
     push hl                                       ; $2515: $E5
-    ld   a, [wDialogCharacterIndex]               ; $2516: $FA $70 $C1
+    ld   a, [wDialogCharacterOutIndex]               ; $2516: $FA $70 $C1
     and  $1F                                      ; $2519: $E6 $1F
     ld   c, a                                     ; $251B: $4F
     ld   hl, Data_01C_45A1                        ; $251C: $21 $A1 $45
@@ -364,7 +364,7 @@ DialogDrawNextCharacterHandler::
     ; Check: safe (same bank)
     ; ld   a, BANK(DialogPointerTable)              ; $2529: $3E $1C
     ; ld   [rSelectROMBank], a                      ; $252B: $EA $00 $21
-    ld   a, [wDialogCharacterIndex]               ; $252E: $FA $70 $C1
+    ld   a, [wDialogCharacterOutIndex]               ; $252E: $FA $70 $C1
     and  $1F                                      ; $2531: $E6 $1F
     ld   c, a                                     ; $2533: $4F
     ld   b, $00                                   ; $2534: $06 $00
@@ -540,6 +540,7 @@ ENDR
     ; xor  a                                        ; $2646: $AF
     ; pop  hl                                       ; $2647: $E1
 
+    call IncrementDialogNextCharOutIndex
     call IncrementDialogNextCharIndex
     xor  a                                        ; $2673: $AF
     ld   [wDialogIsWaitingForButtonPress], a      ; $2674: $EA $CC $C1
@@ -576,7 +577,7 @@ data_2693::
 ; the maximum line length (otherwise a line of 16 characters
 ; followed by "@" would print an empty line).
 DialogBreakHandler::
-    ld   a, [wDialogCharacterIndex]               ; $2695: $FA $70 $C1
+    ld   a, [wDialogCharacterOutIndex]               ; $2695: $FA $70 $C1
     and  $1F                                      ; $2698: $E6 $1F
     jr   nz, .jp_26E1                             ; $269A: $20 $45
     ld   a, [wDialogNextChar]                     ; $269C: $FA $C3 $C3

@@ -37,6 +37,7 @@ OpenDialogInTable0::
     ld   [wDialogOpenCloseAnimationFrame], a      ; $238F: $EA $6F $C1
     ld   [wDialogCharacterIndex], a               ; $2392: $EA $70 $C1
     ld [wDialogNextCharPosition], a
+    ld [wDialogCharacterOutIndex], a
     ld   [wDialogCharacterIndexHi], a             ; $2395: $EA $64 $C1
     ld   [wNameIndex], a                          ; $2398: $EA $08 $C1
     ld   [wDialogIndexHi], a                      ; $239B: $EA $12 $C1
@@ -54,6 +55,13 @@ OpenDialogInTable0::
     ld   [wDialogState], a                        ; $23AC: $EA $9F $C1
 
     ret                                           ; $23AF: $C9
+
+IncrementDialogNextCharOutIndex::
+    push hl
+    ld hl, wDialogCharacterOutIndex
+    inc [hl]
+    pop hl
+    ret
 
 IncrementAndReadNextChar::
     call IncrementDialogNextCharIndex
