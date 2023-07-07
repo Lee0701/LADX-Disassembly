@@ -3,7 +3,7 @@ import sys
 import re
 
 # python3 generateFontTable.py [input.txt] [output.s] [bank] [offset]
-# bank and offset are to be hex
+# bank and offset should be in hex
 
 with open(sys.argv[1], 'r', encoding='utf8') as f:
     chars = f.read()
