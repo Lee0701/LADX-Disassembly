@@ -1,5 +1,11 @@
 fontset:
   - type: outline
+    file_name: Galmuri7.ttf
+    font_size: 8
+    charset: charset-ascii.txt
+    offset_x: 0
+    offset_y: -1
+  - type: outline
     file_name: MisakiGothic.ttf
     font_size: 8
     charset: charset-fullwidths.txt

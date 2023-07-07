@@ -5,8 +5,8 @@ macro read_next_byte_with_preserving_de
     push de
 endm
 
-; param l: mode ($00 = dialog, $01 = tile)
-; return h: codepoint, highest 1 byte
+; param l: mode ($00 = dialog, $01 = name (in dialog), $02 = tile)
+; return e: codepoint, highest 1 byte
 ; return bc: codepoint, lower 2 bytes
 GetUTF8Char::
     ; required for '.file_menu' mode
@@ -93,7 +93,7 @@ PreQuadByte::
     and a, $07
     rlca
     rlca
-    ld h, a
+    ld e, a
     ret
 
 MidQuadByte1::
@@ -103,7 +103,7 @@ MidQuadByte1::
     rrca
     rrca
     or h
-    ld h, a
+    ld e, a
     ret
 
 MidQuadByte2::
@@ -142,6 +142,8 @@ ReadNextByte::
     and a
     jr z, .dialog
     cp a, $01
+    jr z, .name
+    cp a, $02
     jr z, .file_menu
     ; safety
     pop af
@@ -150,6 +152,23 @@ ReadNextByte::
 .dialog
     pop af
     call IncrementAndReadNextChar
+    ret
+
+.name
+    pop af
+    push hl
+    push de
+    ld d, $00
+    ld hl, wNameIndex
+    ld a, [hl]
+    ld e, a
+    inc a
+    ld [wNameIndex], a
+    ld hl, wName
+    add hl, de
+    ld a, [hl]
+    pop de
+    pop hl
     ret
 
 .file_menu
@@ -232,4 +251,26 @@ GetFontOffset::
     ld h, a
     pop af
     
+    ret
+
+FileMenuNextChar::
+    inc de
+    ld a, [de]
+    ret
+
+NameCharToUTF8::
+    ld hl, NameToUTF8Table
+    ld d, $00
+    ld e, a
+    sla e
+    rl d
+    sla e
+    rl d
+    add hl, de
+    ld d, h
+    ld e, l
+    ld a, [de]
+    ld l, $01
+    call GetUTF8Char
+    call GetFontAddr
     ret

@@ -912,6 +912,9 @@ func_001_4CDA::
     ld   hl, NameEntryCharacterTable              ; $4CE0: $21 $B5 $4B
     add  hl, bc                                   ; $4CE3: $09
     ld   a, [hl]                                  ; $4CE4: $7E
+
+    ; call ProcessNameEntryCharFromBank01
+
     ld   e, a                                     ; $4CE5: $5F
     ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
     ld   c, a                                     ; $4CE9: $4F

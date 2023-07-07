@@ -480,34 +480,23 @@ ENDR
     ; Name characters are from NameEntryCharmap
     ; which is ASCII + 1, so decrement it here to
     ; convert it to DialogCharmap which is ASCII
-    dec  a                                        ; $2601: $3D
+    ; dec  a                                        ; $2601: $3D
     ; Convert NameEntryCharmap space ($00) to
     ; DialogCharmap/ASCII space ($20)
-    PUSHC
-    SETCHARMAP NameEntryCharmap
-    cp   $20 - 1                                  ; $2602: $FE $FF
-    POPC
+    ; PUSHC
+    ; SETCHARMAP NameEntryCharmap
+    ; cp   $20 - 1                                  ; $2602: $FE $FF
+    ; POPC
+    and a
     jr   nz, .handleNameChar                      ; $2604: $20 $02
     ld   a, $20                                   ; $2606: $3E $20
 
 .handleNameChar
-    push de
-    ld hl, NameToUTF8
-    ld d, $00
-    ld e, a
-    sla e
-    rl d
-    sla e
-    rl d
-    add hl, de
-    ld d, h
-    ld e, l
-    ld a, [de]
+    ; call NameCharToUTF8
+    ldh  [hMultiPurpose1], a
     ld l, $01
     call GetUTF8Char
-    ld e, h
     call GetFontAddr
-    pop de
     jr .endChar
 
 .notName
@@ -515,7 +504,6 @@ ENDR
     ; ld   e, a                                     ; $260A: $5F
     ld l, $00
     call GetUTF8Char
-    ld e, h
     call GetFontAddr
 
 .endChar

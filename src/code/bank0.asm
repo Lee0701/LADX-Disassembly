@@ -786,16 +786,21 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
-FileMenuNextChar::
-    inc de
-    ld a, [de]
+ProcessNameEntryCharFromBank01::
+    push af
+    ld a, BANK(NameCharToUTF8)
+    ld [rSelectROMBank], a
+    pop af
+    call NameCharToUTF8
+    ld a, $01
+    ld [rSelectROMBank], a
     ret
 
 ReadTileValueFromUTF8Table::
     push af
     ld a, BANK(GetUTF8Char)
     ld [rSelectROMBank], a
-    ld l, $01
+    ld l, $02
     pop af
     call GetUTF8Char
     call GetFontAddr
