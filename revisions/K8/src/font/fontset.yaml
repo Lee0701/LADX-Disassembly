@@ -1,0 +1,25 @@
+fontset:
+  - type: outline
+    file_name: MisakiGothic.ttf
+    font_size: 8
+    charset: charset-fullwidths.txt
+    offset_x: 0
+    offset_y: 0
+  - type: outline
+    file_name: MisakiGothic.ttf
+    font_size: 8
+    charset: charset-kana.txt
+    offset_x: 0
+    offset_y: 0
+  - type: outline
+    file_name: Galmuri7.ttf
+    font_size: 8
+    charset: charset-ks1001-hangul.txt
+    offset_x: 0
+    offset_y: -1
+  - type: outline
+    file_name: MisakiGothic.ttf
+    font_size: 8
+    charset: charset-ks1001-hanja.txt
+    offset_x: 0
+    offset_y: 0
