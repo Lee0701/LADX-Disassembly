@@ -8,8 +8,8 @@
 #
 
 2BPP    := rgbgfx
-
 ASM     := rgbasm
+PYTHON  := python
 
 # Get assembler version
 ASMVER    := $(shell $(ASM) --version | cut -f2 -dv)
@@ -124,12 +124,21 @@ azlj-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLJ"
 # UTF-8
 #
 
+azlu_lang = ja_JPAN
+base_lang = ja
+
 azlu_asm = $(shell find revisions/U8 -type f -name '*.asm')
 azlu_gfx = $(shell find revisions/U8 -type f -name '*.png')
 azlu_bin = $(shell find revisions/U8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
 
+azlu_text = revisions/U8/src/text/dialog.asm
+
+$(azlu_text): weblate/$(azlu_lang)/dialog.yaml weblate/$(base_lang)/dialog.yaml
+	$(PYTHON) tools/utf-8/import_dialog.py weblate/$(base_lang)/dialog.yaml $< $@
+	$(PYTHON) tools/utf-8/split_sections.py $@ $@
+
 games += azlu-r2.gbc
-src/main.azlu-r2.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+src/main.azlu-r2.o: $(azlu_text) $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
 azlu-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/U8/src/
 azlu-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLu"
 
