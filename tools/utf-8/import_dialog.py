@@ -5,12 +5,15 @@ import yaml
 def group_n_elements(L, n):
     return [tuple(L[i:i+n]) for i in range(0, len(L), n)]
 
-def main(input_file, output_file):
+def main(base_file, input_file, output_file):
+    with open(base_file, 'r') as f:
+        base = yaml.load(f, Loader=yaml.FullLoader)
     with open(input_file, 'r') as f:
         content = yaml.load(f, Loader=yaml.FullLoader)
     
     result = []
-    for key, value in content.items():
+    for key, base_value in base.items():
+        value = content[key] if key in content else base_value
         result.append(key + '::')
         for line in value.split('\n'):
             chars = list(line.encode('utf-8'))
@@ -26,5 +29,5 @@ def main(input_file, output_file):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    input_file, output_file = args[:2]
-    main(input_file, output_file)
+    base_file,  input_file, output_file = args[:3]
+    main(base_file, input_file, output_file)
