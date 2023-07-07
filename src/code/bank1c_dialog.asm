@@ -23,9 +23,9 @@ ExecuteDialog::
 
     ; If the character index is > 20 (i.e. past the first two lines),
     ; mask wDialogNextCharPosition around $10
-    ; ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
-    ; and  a                                        ; $2337: $A7
-    ; ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
+    ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
+    and  a                                        ; $2337: $A7
+    ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
     ld a, [wDialogNextCharPosition]
     cp a, $10
     jr   z, .wrapPosition                        ; $233B: $20 $04
@@ -349,7 +349,7 @@ DialogLetterAnimationEndHandler::
     xor  a                                        ; $2513: $AF
     ldi  [hl], a                                  ; $2514: $22
     push hl                                       ; $2515: $E5
-    ld   a, [wDialogCharacterIndex]               ; $2516: $FA $70 $C1
+    ld   a, [wDialogCharacterOutIndex]               ; $2516: $FA $70 $C1
     and  $1F                                      ; $2519: $E6 $1F
     ld   c, a                                     ; $251B: $4F
     ld   hl, Data_01C_45A1                        ; $251C: $21 $A1 $45
@@ -364,7 +364,7 @@ DialogDrawNextCharacterHandler::
     ; Check: safe (same bank)
     ; ld   a, BANK(DialogPointerTable)              ; $2529: $3E $1C
     ; ld   [rSelectROMBank], a                      ; $252B: $EA $00 $21
-    ld   a, [wDialogCharacterIndex]               ; $252E: $FA $70 $C1
+    ld   a, [wDialogCharacterOutIndex]               ; $252E: $FA $70 $C1
     and  $1F                                      ; $2531: $E6 $1F
     ld   c, a                                     ; $2533: $4F
     ld   b, $00                                   ; $2534: $06 $00
@@ -489,7 +489,26 @@ ENDR
     POPC
     jr   nz, .handleNameChar                      ; $2604: $20 $02
     ld   a, $20                                   ; $2606: $3E $20
+
 .handleNameChar
+    push de
+    ld hl, NameToUTF8
+    ld d, $00
+    ld e, a
+    sla e
+    rl d
+    sla e
+    rl d
+    add hl, de
+    ld d, h
+    ld e, l
+    ld a, [de]
+    ld l, $01
+    call GetUTF8Char
+    ld e, h
+    call GetFontAddr
+    pop de
+    jr .endChar
 
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
@@ -508,21 +527,20 @@ ENDR
     ; ld   e, $10                                   ; $2631: $1E $10
     call CopyTile
     ld   [hl], $00                                ; $2639: $36 $00
-    push hl                                       ; $263B: $E5
+    ; push hl                                       ; $263B: $E5
 
     ; Check if the current character has a diacritic tile above
     ; (if compiled with support for diacritics)
     ; Check: safe (same bank)
     ; ld   a, BANK(CodepointToDiacritic)            ; $263C: $3E $1C
     ; ld   [rSelectROMBank], a ; current character  ; $263E: $EA $00 $21
-    ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
-    ld   e, a                                     ; $2643: $5F
-    ld   d, $00                                   ; $2644: $16 $00
+    ; ldh  a, [hMultiPurpose1]                      ; $2641: $F0 $D8
+    ; ld   e, a                                     ; $2643: $5F
+    ; ld   d, $00                                   ; $2644: $16 $00
+    ; xor  a                                        ; $2646: $AF
+    ; pop  hl                                       ; $2647: $E1
 
-    xor  a                                        ; $2646: $AF
-    pop  hl                                       ; $2647: $E1
-
-.noDiacritic
+    call IncrementDialogNextCharOutIndex
     call IncrementDialogNextCharIndex
     xor  a                                        ; $2673: $AF
     ld   [wDialogIsWaitingForButtonPress], a      ; $2674: $EA $CC $C1
@@ -559,7 +577,7 @@ data_2693::
 ; the maximum line length (otherwise a line of 16 characters
 ; followed by "@" would print an empty line).
 DialogBreakHandler::
-    ld   a, [wDialogCharacterIndex]               ; $2695: $FA $70 $C1
+    ld   a, [wDialogCharacterOutIndex]               ; $2695: $FA $70 $C1
     and  $1F                                      ; $2698: $E6 $1F
     jr   nz, .jp_26E1                             ; $269A: $20 $45
     ld   a, [wDialogNextChar]                     ; $269C: $FA $C3 $C3
