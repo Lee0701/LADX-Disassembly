@@ -217,12 +217,12 @@ GetFontId::
     pop af
     push af
     
-    call ReadByteFromBankA
+    read_byte_from_bank_a_and_return
     ld b, a
     pop af
     push af
     inc hl
-    call ReadByteFromBankA
+    read_byte_from_bank_a_and_return
     ld c, a
     pop af
 

@@ -127,18 +127,18 @@ ReadDialogNextChar::
     pop hl
     ret
 
-; Read a byte from bank a, offset hl.
-; Can only be called from bank $1c.
-ReadByteFromBankA::
-    push bc
+; Read a byte from bank b, offset hl, and return to bank c.
+ReadByteFromBankBAndReturnToC::
     ld [rSelectROMBank], a
     ld b, [hl]
 
-    ld a, $1c
+    ld a, [hl]
+    ld b, a
+
+    ld a, c
     ld [rSelectROMBank], a
 
     ld a, b
-    pop bc
     ret
 
 ; param a: bank number to read from

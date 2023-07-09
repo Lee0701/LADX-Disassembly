@@ -887,7 +887,7 @@ CopyTile::
     ld l, c
     ; ld   a, [bc]                                  ; $2633: $0A
     ; ld a, BANK(FontTiles)
-    call ReadByteFromBankA
+    read_byte_from_bank_a_and_return
     pop hl
     ldi  [hl], a                                  ; $2634: $22
     pop af
