@@ -140,35 +140,3 @@ ReadByteFromBankBAndReturnToC::
 
     ld a, b
     ret
-
-; param a: bank number to read from
-; param bc: address to read from
-; param hl: address to copy to
-AppendDrawCommand::
-    push bc
-    push de
-    ld [rSelectROMBank], a
-
-    ld a, [wDrawCommandsSize]
-    ld e, a
-    add $10
-    ld [wDrawCommandsSize], a
-    ld d, $00
-    ld hl, wDrawCommand
-    add hl, de
-    ld e, $10
-
-.appendDrawCommand_loop
-    ld a, [bc]
-    inc bc
-    ldi [hl], a
-    dec e
-    jr nz, .appendDrawCommand_loop
-
-    ld [hl], $00
-
-    ld a, $01
-    ld [rSelectROMBank], a
-    pop de
-    pop bc
-    ret

@@ -344,7 +344,7 @@ include "code/dialog_letters.asm"
 include "text/dialog_3.asm"
 include "constants/charmaps/name_to_utf8.asm"
 include "code/bank1c_utf8.asm"
-include "code/bank1c_dialog.asm"
+include "code/bank1c_text.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
 include "text/dialog_4.asm"

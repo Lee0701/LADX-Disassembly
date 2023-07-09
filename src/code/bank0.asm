@@ -786,8 +786,17 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
+Call_Bank1C_DrawSaveSlotName::
+    ld a, $1c
+    ld [rSelectROMBank], a
+    call Bank1C_DrawSaveSlotName
+    ld a, $01
+    ld [rSelectROMBank], a
+    ret
+
 ReadTileValueFromUTF8Table::
     push af
+
     ld a, BANK(GetUTF8Char)
     ld [rSelectROMBank], a
 
@@ -823,7 +832,6 @@ ReadTileValueFromUTF8Table::
     pop af
 
     call CopyTile
-    ; call AppendDrawCommand
     pop de
 
     ld a, e
@@ -831,7 +839,8 @@ ReadTileValueFromUTF8Table::
     add a, $40
 
     ld hl, rSelectROMBank
-    ld [hl], $01
+    ld [hl], $1c
+
     ret
 
 ReadTileValueFromAsciiTable::
@@ -1467,16 +1476,26 @@ AnimateEntitiesAndRestoreBank02::
     jr   AnimateEntitiesAndRestoreBank            ; $0F0C: $18 $E6
 
 FileSelectionHandler::
+    ld a, $00
+    ld [wDialogCharacterOutIndex], a
     jp   FileSelectionEntryPoint                  ; $0F0E: $C3 $CE $47
 
 FileCreationHandler::
     jp   FileCreationEntryPoint                   ; $0F11: $C3 $07 $4A
 
 FileDeletionHandler::
-    jp   FileDeletionEntryPoint                   ; $0F14: $C3 $FB $4C
+    ; jp   FileDeletionEntryPoint                   ; $0F14: $C3 $FB $4C
+    call FileDeletionEntryPoint
+    ld a, $fe
+    ld [wDialogCharacterOutIndex], a
+    ret
 
 FileCopyHandler::
-    jp   FileCopyEntryPoint                       ; $0F17: $C3 $8C $4F
+    ; jp   FileCopyEntryPoint                       ; $0F17: $C3 $8C $4F
+    call FileCopyEntryPoint
+    ld a, $fe
+    ld [wDialogCharacterOutIndex], a
+    ret
 
 WorldHandler::
     callsb UpdatePaletteEffectForInteractiveObjects ; $0F1A: $3E $14 $EA $00 $21 $CD $4B $4C
