@@ -790,6 +790,11 @@ ReadTileValueFromUTF8Table::
     push af
     ld a, BANK(GetUTF8Char)
     ld [rSelectROMBank], a
+
+    ld hl, wDialogCharacterOutIndex
+    dec [hl]
+
+    ; Tile mode
     ld l, $02
     pop af
     call GetUTF8Char
@@ -809,13 +814,14 @@ ReadTileValueFromUTF8Table::
 
     pop af
     push de
+
     push af
 .wait
     ld a, [rLY]
     cp SCRN_Y + 1
     jr nz, .wait
-
     pop af
+
     call CopyTile
     ; call AppendDrawCommand
     pop de
@@ -829,7 +835,7 @@ ReadTileValueFromUTF8Table::
     ret
 
 ReadTileValueFromAsciiTable::
-    ; ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
+    ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
     jr   ReadValueInDialogsBank                   ; $0C28: $18 $03
 
 ReadTileValueFromDiacriticsTable::

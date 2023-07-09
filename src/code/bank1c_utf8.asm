@@ -174,12 +174,11 @@ ReadNextByte::
 
 .file_menu
     pop af
-    ; ldh a, [hMultiPurpose0]
-    ; inc a
-    ; ldh [hMultiPurpose0], a
     ld a, [de]
-    ; ld hl, wDialogCharacterOutIndex
-    ; inc [hl]
+    push hl
+    ld hl, wDialogCharacterOutIndex
+    dec [hl]
+    pop hl
     ret
 
 GetFontAddr::

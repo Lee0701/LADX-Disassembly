@@ -96,6 +96,9 @@ FileSelectionPrepare5::
     jp   FileDeletionState4Handler                ; $484F: $C3 $6D $4D
 
 DrawSaveSlotName::
+    ld a, NAME_LENGTH
+    ld [wDialogCharacterOutIndex], a
+
     push de                                       ; $4852: $D5
     ld   a, [wDrawCommandsSize]                   ; $4853: $FA $00 $D6
     ld   e, a                                     ; $4856: $5F
@@ -133,6 +136,19 @@ DrawSaveSlotName::
     pop  bc                                       ; $4880: $C1
 
 .drawCharacterTile
+
+    push af
+    ld a, [wDialogCharacterOutIndex]
+    cp a, $ff
+    jr nz, .notend
+    pop af
+    pop de
+    ; Forcefully end drawing if name length limit is reached
+    jr .end
+
+.notend
+    pop af
+
     ldi  [hl], a                                  ; $4881: $22
     inc  de                                       ; $4882: $13
     ldh  a, [hMultiPurpose0]                      ; $4883: $F0 $D7
@@ -148,6 +164,8 @@ DrawSaveSlotName::
     pop  de                                       ; $4891: $D1
     ld   a, $05                                   ; $4892: $3E $05
 
+.end
+    ; Jump destination to stop drawing characters
 .drawSpacingRowLoop
     ; Draw the empty row above the save slot name;
     ; might contain diacritics
