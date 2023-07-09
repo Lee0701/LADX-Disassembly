@@ -466,7 +466,8 @@ ENDR
     inc  a                                        ; $25EA: $3C
     cp   NAME_LENGTH                              ; $25EB: $FE $05
     jr   nz, .notOver                             ; $25ED: $20 $01
-    xor  a                                        ; $25EF: $AF
+    ; Prevent name displaying multiple times with UTF-8
+    ; xor  a                                        ; $25EF: $AF
 .notOver
     ld   [wNameIndex], a                          ; $25F0: $EA $08 $C1
     ld   hl, wName                                ; $25F3: $21 $4F $DB
@@ -878,7 +879,6 @@ DialogOpenAnimationStart::
 ; param bc: address to read from
 ; param hl: address to copy to
 CopyTile::
-    ; copy character tile data to wDrawCommandData
     ld e, $10
 .copyTileLoop
     push af

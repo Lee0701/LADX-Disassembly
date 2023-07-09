@@ -786,16 +786,6 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
-ProcessNameEntryCharFromBank01::
-    push af
-    ld a, BANK(NameCharToUTF8)
-    ld [rSelectROMBank], a
-    pop af
-    call NameCharToUTF8
-    ld a, $01
-    ld [rSelectROMBank], a
-    ret
-
 ReadTileValueFromUTF8Table::
     push af
     ld a, BANK(GetUTF8Char)
@@ -819,12 +809,12 @@ ReadTileValueFromUTF8Table::
 
     pop af
     push de
-
     push af
 .wait
     ld a, [rLY]
     cp SCRN_Y + 1
     jr nz, .wait
+
     pop af
     call CopyTile
     ; call AppendDrawCommand
@@ -839,7 +829,7 @@ ReadTileValueFromUTF8Table::
     ret
 
 ReadTileValueFromAsciiTable::
-    ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
+    ; ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
     jr   ReadValueInDialogsBank                   ; $0C28: $18 $03
 
 ReadTileValueFromDiacriticsTable::

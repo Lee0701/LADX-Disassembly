@@ -1,6 +1,7 @@
 
 macro read_next_byte_with_preserving_de
     pop de
+    inc de
     call ReadNextByte
     push de
 endm
@@ -9,7 +10,7 @@ endm
 ; return e: codepoint, highest 1 byte
 ; return bc: codepoint, lower 2 bytes
 GetUTF8Char::
-    ; required for '.file_menu' mode
+    ; We need to keep de value for '.file_menu' mode
     push de
     ld e, $00
     ld h, $00
@@ -173,8 +174,12 @@ ReadNextByte::
 
 .file_menu
     pop af
-    ldh  a, [hMultiPurpose0]
-    call FileMenuNextChar
+    ; ldh a, [hMultiPurpose0]
+    ; inc a
+    ; ldh [hMultiPurpose0], a
+    ld a, [de]
+    ; ld hl, wDialogCharacterOutIndex
+    ; inc [hl]
     ret
 
 GetFontAddr::
@@ -251,11 +256,6 @@ GetFontOffset::
     ld h, a
     pop af
     
-    ret
-
-FileMenuNextChar::
-    inc de
-    ld a, [de]
     ret
 
 NameCharToUTF8::

@@ -121,6 +121,7 @@ DrawSaveSlotName::
     ld   a, DIALOG_BG_TILE_DARK                   ; $4871: $3E $7E
     jr   z, .drawCharacterTile                    ; $4873: $28 $0C
     ld   a, [de]                                  ; $4875: $1A
+    ; Not needed anymore with UTF-8
     ; dec  a                                        ; $4876: $3D
     push bc                                       ; $4877: $C5
     push hl                                       ; $4878: $E5
@@ -912,8 +913,6 @@ func_001_4CDA::
     ld   hl, NameEntryCharacterTable              ; $4CE0: $21 $B5 $4B
     add  hl, bc                                   ; $4CE3: $09
     ld   a, [hl]                                  ; $4CE4: $7E
-
-    ; call ProcessNameEntryCharFromBank01
 
     ld   e, a                                     ; $4CE5: $5F
     ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
