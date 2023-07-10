@@ -793,28 +793,7 @@ jr_001_4CB7::
     ret                                           ; $4CD9: $C9
 
 func_001_4CDA::
-    ld   a, [wNameEntryCurrentChar]               ; $4CDA: $FA $A9 $DB
-    ld   c, a                                     ; $4CDD: $4F
-    ld   b, $00                                   ; $4CDE: $06 $00
-    ld   hl, NameEntryCharacterTable              ; $4CE0: $21 $B5 $4B
-    add  hl, bc                                   ; $4CE3: $09
-    ld   a, [hl]                                  ; $4CE4: $7E
-
-    ld   e, a                                     ; $4CE5: $5F
-    ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
-    ld   c, a                                     ; $4CE9: $4F
-    sla  a                                        ; $4CEA: $CB $27
-    sla  a                                        ; $4CEC: $CB $27
-    add  a, c                                     ; $4CEE: $81
-    ld   c, a                                     ; $4CEF: $4F
-    ld   hl, wSaveSlot1Name                       ; $4CF0: $21 $80 $DB
-    add  hl, bc                                   ; $4CF3: $09
-    ld   a, [wSaveSlotNameCharIndex]              ; $4CF4: $FA $AA $DB
-    ld   c, a                                     ; $4CF7: $4F
-    add  hl, bc                                   ; $4CF8: $09
-    ld   [hl], e                                  ; $4CF9: $73
-    ret                                           ; $4CFA: $C9
-
+    jp Call_Bank1C_func_001_4CDA
 
 ; -----------------------------------------------------------------------------
 ;

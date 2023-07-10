@@ -794,19 +794,27 @@ Call_Bank1C_DrawSaveSlotName::
     ld [rSelectROMBank], a
     ret
 
+Call_Bank1C_func_001_4CDA::
+    ld a, $1c
+    ld [rSelectROMBank], a
+    call Bank1C_func_001_4CDA
+    ld a, $01
+    ld [rSelectROMBank], a
+    ret
+
 ReadTileValueFromUTF8Table::
     push af
 
-    ld a, BANK(GetUTF8Char)
+    ld a, BANK(GetFontAddr)
     ld [rSelectROMBank], a
 
     ld hl, wDialogCharacterOutIndex
     dec [hl]
 
     ; Tile mode
-    ld l, $02
+    ; ld l, $02
     pop af
-    call GetUTF8Char
+    ; call GetUTF8Char
     call GetFontAddr
     push af
     ld a, e

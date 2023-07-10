@@ -493,7 +493,6 @@ ENDR
     ld   a, $20                                   ; $2606: $3E $20
 
 .handleNameChar
-    ; call NameCharToUTF8
     ldh  [hMultiPurpose1], a
     ld l, $01
     call GetUTF8Char
@@ -1084,3 +1083,58 @@ AppendDrawCommand::
     jr nz, .loop
 
     ret
+
+
+Bank1C_func_001_4CDA::
+    push de
+    ld   a, [wNameEntryCurrentChar]               ; $4CDA: $FA $A9 $DB
+    ld   c, a                                     ; $4CDD: $4F
+    ld   b, $00                                   ; $4CDE: $06 $00
+    ld   hl, NameEntryCharacterTable              ; $4CE0: $21 $B5 $4B
+    add  hl, bc                                   ; $4CE3: $09
+    ; ld   a, [hl]                                  ; $4CE4: $7E
+    ld a, $01
+    read_byte_from_bank_a_and_return
+
+    ld c, a
+    ld b, $00
+    dec bc
+    sla c
+    rl b
+    sla c
+    rl b
+    ld hl, NameInputToUTF8Table
+    add hl, bc
+    push hl
+
+    ; ld   e, a                                     ; $4CE5: $5F
+    ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
+    ld   c, a                                     ; $4CE9: $4F
+    sla  a                                        ; $4CEA: $CB $27
+    sla  a                                        ; $4CEC: $CB $27
+    add  a, c                                     ; $4CEE: $81
+    ld   c, a                                     ; $4CEF: $4F
+    ld   hl, wSaveSlot1Name                       ; $4CF0: $21 $80 $DB
+    add  hl, bc                                   ; $4CF3: $09
+    ld   a, [wSaveSlotNameCharIndex]              ; $4CF4: $FA $AA $DB
+    ld   c, a                                     ; $4CF7: $4F
+    add  hl, bc                                   ; $4CF8: $09
+    ; ld   [hl], e                                  ; $4CF9: $73
+    ld d, h
+    ld e, l
+
+    pop hl
+.loop
+    ldi a, [hl]
+    ld [de], a
+    inc de
+    and a
+    jr nz, .loop
+
+    ld hl, wSaveSlotNameCharIndex
+    ld a, d
+    ldi [hl], a
+    ld a, e
+    ld [hl], a
+    pop de
+    ret                                           ; $4CFA: $C9

@@ -256,20 +256,3 @@ GetFontOffset::
     pop af
     
     ret
-
-NameCharToUTF8::
-    ld hl, NameToUTF8Table
-    ld d, $00
-    ld e, a
-    sla e
-    rl d
-    sla e
-    rl d
-    add hl, de
-    ld d, h
-    ld e, l
-    ld a, [de]
-    ld l, $01
-    call GetUTF8Char
-    call GetFontAddr
-    ret
