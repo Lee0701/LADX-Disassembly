@@ -896,17 +896,17 @@ Bank1C_DrawSaveSlotName::
     push de                                       ; $486A: $D5
     ld   a, $05                                   ; $486B: $3E $05
 
-;     push af
-;     ld a, [wDialogCharacterOutIndex]
-;     cp $fe
-;     jr nz, .continue
-;     pop af
-;     ; pop de
-;     jr .skip
-; .continue
-;     pop af
-;     ld a, NAME_LENGTH
-;     ld [wDialogCharacterOutIndex], a
+    push af
+    ld a, [wDialogCharacterOutIndex]
+    cp $fe
+    jr nz, .continue
+    pop af
+    ; pop de
+    jr .skip
+.continue
+    pop af
+    ld a, NAME_LENGTH
+    ld [wDialogCharacterOutIndex], a
 
 .drawCharacterRowLoop
     ldh  [hMultiPurpose0], a                      ; $486D: $E0 $D7
@@ -926,7 +926,7 @@ Bank1C_DrawSaveSlotName::
     pop  hl                                       ; $487F: $E1
     pop  bc                                       ; $4880: $C1
 
-; .skip
+.skip
 .drawCharacterTile
 
     push af

@@ -812,9 +812,9 @@ ReadTileValueFromUTF8Table::
     dec [hl]
 
     ; Tile mode
-    ; ld l, $02
+    ld l, $02
     pop af
-    ; call GetUTF8Char
+    call GetUTF8Char
     call GetFontAddr
     push af
     ld a, e
