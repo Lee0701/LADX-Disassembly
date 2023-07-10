@@ -1103,7 +1103,7 @@ Bank1C_func_001_4CDA::
     rl b
     sla c
     rl b
-    ld hl, NameInputToUTF8Table
+    ld hl, TextEntryTable
     add hl, bc
     push hl
 

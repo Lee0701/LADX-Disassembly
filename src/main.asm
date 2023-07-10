@@ -342,7 +342,7 @@ include "data/codepoint_to_diacritic.asm"
 include "data/dialogs/dialog_banks.asm"
 include "code/dialog_letters.asm"
 include "text/dialog_3.asm"
-include "constants/charmaps/name_to_utf8.asm"
+include "constants/charmaps/text_entry_table.asm"
 include "code/bank1c_utf8.asm"
 include "code/bank1c_text.asm"
 
