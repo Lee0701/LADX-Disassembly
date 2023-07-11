@@ -875,7 +875,7 @@ DialogOpenAnimationStart::
     jp   Farcall                                  ; $54A9: $C3 $D7 $0B
 
 Bank1C_DrawSaveSlotName::
-    ld a, NAME_LENGTH
+    xor a
     ld [wDialogCharacterOutIndex], a
 
     push de                                       ; $4852: $D5
@@ -898,15 +898,15 @@ Bank1C_DrawSaveSlotName::
 
     push af
     ld a, [wDialogCharacterOutIndex]
-    cp $fe
+    cp NAME_LENGTH
     jr nz, .continue
     pop af
     ; pop de
     jr .skip
 .continue
     pop af
-    ld a, NAME_LENGTH
-    ld [wDialogCharacterOutIndex], a
+    ; xor a
+    ; ld [wDialogCharacterOutIndex], a
 
 .drawCharacterRowLoop
     ldh  [hMultiPurpose0], a                      ; $486D: $E0 $D7
@@ -931,7 +931,7 @@ Bank1C_DrawSaveSlotName::
 
     push af
     ld a, [wDialogCharacterOutIndex]
-    cp a, $ff
+    cp a, $00
     jr nz, .notend
     pop af
     pop de

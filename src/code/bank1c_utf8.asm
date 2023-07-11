@@ -177,7 +177,7 @@ ReadNextByte::
     ld a, [de]
     push hl
     ld hl, wDialogCharacterOutIndex
-    dec [hl]
+    inc [hl]
     pop hl
     ret
 

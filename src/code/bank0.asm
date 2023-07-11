@@ -809,7 +809,7 @@ ReadTileValueFromUTF8Table::
     ld [rSelectROMBank], a
 
     ld hl, wDialogCharacterOutIndex
-    dec [hl]
+    inc [hl]
 
     ; Tile mode
     ld l, $02
@@ -1493,16 +1493,16 @@ FileCreationHandler::
 
 FileDeletionHandler::
     ; jp   FileDeletionEntryPoint                   ; $0F14: $C3 $FB $4C
-    call FileDeletionEntryPoint
-    ld a, $fe
+    ld a, $00
     ld [wDialogCharacterOutIndex], a
+    call FileDeletionEntryPoint
     ret
 
 FileCopyHandler::
     ; jp   FileCopyEntryPoint                       ; $0F17: $C3 $8C $4F
-    call FileCopyEntryPoint
-    ld a, $fe
+    ld a, $00
     ld [wDialogCharacterOutIndex], a
+    call FileCopyEntryPoint
     ret
 
 WorldHandler::
