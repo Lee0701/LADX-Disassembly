@@ -3,7 +3,7 @@
 ; * Main, a copy of wram, from wOverworldRoomStatus till wSaveSlotNames (exclusive)
 ; * 3 pieces of data added with the DX version, for the color dungeon and tunic and photos.
 SAVE_PREFIX_SIZE equ 5
-SAVE_MAIN_SIZE   equ $0380
+SAVE_MAIN_SIZE   equ $038b
 SAVE_DX1_SIZE    equ $0005 ; wColorDungeonItemFlags
 SAVE_DX2_SIZE    equ $0020 ; wColorDungeonRoomStatus
 SAVE_DX3_SIZE    equ $0003 ; wTunicType, wPhotos1, wPhotos2

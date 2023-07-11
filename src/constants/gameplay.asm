@@ -2,7 +2,7 @@
 
 ; Constants
 
-NAME_LENGTH                equ 5
+NAME_LENGTH                equ $10
 
 ; Values for wGameplayType
 GAMEPLAY_INTRO             equ $00

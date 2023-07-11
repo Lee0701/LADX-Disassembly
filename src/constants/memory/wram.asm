@@ -46,7 +46,7 @@ wDynamicOAMBuffer::
   ds 4 * 28 ; C030 - C09F
 
 ; Unused
-ds $60 ; C0A0-C0FF
+ds $3f ; C0A0-C0FF
 
 ; Table of the scrollX offset to add for each screen section being drawn
 wScrollXOffsetForSection::
@@ -3351,15 +3351,15 @@ wSaveSlotNames::
 
 ; Name of the file in save slot 1
 wSaveSlot1Name::
-  ds 5 ; DB80 - DB84
+  ds NAME_LENGTH
 
 ; Name of the file in save slot 2
 wSaveSlot2Name::
-  ds 5 ; DB85 - DB89
+  ds NAME_LENGTH
 
 ; Name of the file in save slot 3
 wSaveSlot3Name::
-  ds 5 ; DB8A - DB8E
+  ds NAME_LENGTH
 
 ; Higher digits of the amount of rupees to be added to your wallet (high digits)
 wAddRupeeBufferHigh::
