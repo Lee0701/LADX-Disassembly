@@ -1484,7 +1484,7 @@ AnimateEntitiesAndRestoreBank02::
     jr   AnimateEntitiesAndRestoreBank            ; $0F0C: $18 $E6
 
 FileSelectionHandler::
-    ld a, $00
+    xor a
     ld [wDialogCharacterOutIndex], a
     jp   FileSelectionEntryPoint                  ; $0F0E: $C3 $CE $47
 
@@ -1493,14 +1493,14 @@ FileCreationHandler::
 
 FileDeletionHandler::
     ; jp   FileDeletionEntryPoint                   ; $0F14: $C3 $FB $4C
-    ld a, $00
+    xor a
     ld [wDialogCharacterOutIndex], a
     call FileDeletionEntryPoint
     ret
 
 FileCopyHandler::
     ; jp   FileCopyEntryPoint                       ; $0F17: $C3 $8C $4F
-    ld a, $00
+    xor a
     ld [wDialogCharacterOutIndex], a
     call FileCopyEntryPoint
     ret

@@ -466,7 +466,7 @@ ENDR
     inc  a                                        ; $25EA: $3C
     cp   NAME_LENGTH                              ; $25EB: $FE $05
     jr   nz, .notOver                             ; $25ED: $20 $01
-    ; Prevent name displaying multiple times with UTF-8
+    ; Prevent name from being drawn multiple times with UTF-8
     ; xor  a                                        ; $25EF: $AF
 .notOver
     ld   [wNameIndex], a                          ; $25F0: $EA $08 $C1
@@ -875,9 +875,6 @@ DialogOpenAnimationStart::
     jp   Farcall                                  ; $54A9: $C3 $D7 $0B
 
 Bank1C_DrawSaveSlotName::
-    xor a
-    ld [wDialogCharacterOutIndex], a
-
     push de                                       ; $4852: $D5
     ld   a, [wDrawCommandsSize]                   ; $4853: $FA $00 $D6
     ld   e, a                                     ; $4856: $5F
@@ -897,7 +894,7 @@ Bank1C_DrawSaveSlotName::
     ld   a, $05                                   ; $486B: $3E $05
 
     push af
-    ld a, [wDialogCharacterOutIndex]
+    ld a, [wDialogCharacterIndex]
     cp NAME_LENGTH
     jr nz, .continue
     pop af
@@ -930,9 +927,13 @@ Bank1C_DrawSaveSlotName::
 .drawCharacterTile
 
     push af
-    ld a, [wDialogCharacterOutIndex]
-    cp a, $00
+    ld a, [wDialogCharacterIndex]
+    inc a
+    ld [wDialogCharacterIndex], a
+    cp NAME_LENGTH
     jr nz, .notend
+    ld a, $00
+    ld [wDialogCharacterIndex], a
     pop af
     pop de
     ; Forcefully end drawing if name length limit is reached
