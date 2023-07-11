@@ -1,7 +1,6 @@
 
 TextEntryTable::
     include "constants/charmaps/text_entry_table_hangul.asm"
-    db $e3, $82, $80, $00
     db $e3, $82, $81, $00
     db $e3, $82, $82, $00
     db $e3, $82, $84, $00
@@ -44,4 +43,8 @@ TextEntryTable::
     db $e3, $82, $85, $00
     db $e3, $82, $87, $00
     db $e3, $81, $a3, $00
+    db $00, $00, $00, $00
+    db $00, $00, $00, $00
+    db $00, $00, $00, $00
+    db $00, $00, $00, $00
 .end

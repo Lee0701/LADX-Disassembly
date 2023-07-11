@@ -1109,6 +1109,7 @@ Bank1C_func_001_4CDA::
 
     ; ld   e, a                                     ; $4CE5: $5F
     ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
+    ld b, $00
     ld   c, a                                     ; $4CE9: $4F
     sla  a                                        ; $4CEA: $CB $27
     sla  a                                        ; $4CEC: $CB $27
@@ -1124,17 +1125,24 @@ Bank1C_func_001_4CDA::
     ld e, l
 
     pop hl
+
+    ld c, $04
 .loop
     ldi a, [hl]
     ld [de], a
     inc de
+
+    dec c
+    ld a, c
     and a
     jr nz, .loop
 
+; Increment cursor index
     ld hl, wSaveSlotNameCharIndex
     ld a, d
     ldi [hl], a
     ld a, e
     ld [hl], a
+
     pop de
     ret                                           ; $4CFA: $C9
