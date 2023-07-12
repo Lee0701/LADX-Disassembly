@@ -108,8 +108,8 @@ UTF8_to_UTF32::
 UTF16BE_to_UTF32::
     push de
     push af
-    and a, $db
-    xor a, $db
+    and a, $fc
+    xor a, $d8
     jr z, .surrogates
 
     xor a
