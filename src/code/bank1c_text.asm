@@ -1108,7 +1108,7 @@ Bank1C_func_001_4CDA::
     add hl, bc
     push hl
 
-    ; ld   e, a                                     ; $4CE5: $5F
+    ld   e, a                                     ; $4CE5: $5F
     ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
     ld b, $00
     ld   c, a                                     ; $4CE9: $4F
@@ -1121,29 +1121,32 @@ Bank1C_func_001_4CDA::
     ld   a, [wSaveSlotNameCharIndex]              ; $4CF4: $FA $AA $DB
     ld   c, a                                     ; $4CF7: $4F
     add  hl, bc                                   ; $4CF8: $09
-    ; ld   [hl], e                                  ; $4CF9: $73
+    ld   [hl], e                                  ; $4CF9: $73
     ld d, h
     ld e, l
 
     pop hl
 
-    ld c, $04
-.loop
+    ld bc, $0000
+.char_loop
     ldi a, [hl]
+    or a
+    jr z, .skip_byte
     ld [de], a
     inc de
-
-    dec c
-    ld a, c
-    and a
-    jr nz, .loop
+    inc c
+.skip_byte
+    inc b
+    ld a, b
+    cp $04
+    jr nz, .char_loop
 
 ; Increment cursor index
-    ld hl, wSaveSlotNameCharIndex
-    ld a, d
-    ldi [hl], a
-    ld a, e
-    ld [hl], a
-
+    ; ld hl, wSaveSlotNameCharIndex
+    ; ld a, d
+    ; ldi [hl], a
+    ; ld a, e
+    ; ld [hl], a
+.end
     pop de
     ret                                           ; $4CFA: $C9

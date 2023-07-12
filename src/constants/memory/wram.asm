@@ -3440,7 +3440,7 @@ wInventorySelection::
 
 ; unused -> Unicode
 ; wDBA4::
-wConvertedUnicodeIndex::
+wMenuCharacterOutIndex::
   ds 1 ; DBA4
 
 ; 0 = the overworld

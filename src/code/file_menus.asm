@@ -409,6 +409,7 @@ FileCreationInit1Handler::
     ld   [wDBA8], a                               ; $4A1A: $EA $A8 $DB
     ld   [wNameEntryCurrentChar], a               ; $4A1D: $EA $A9 $DB
     ld   [wSaveSlotNameCharIndex], a              ; $4A20: $EA $AA $DB
+    ld [wMenuCharacterOutIndex], a
     ret                                           ; $4A23: $C9
 
 FileCreationInit2Handler::
