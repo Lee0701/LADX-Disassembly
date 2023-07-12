@@ -6,9 +6,8 @@ macro read_next_byte_with_preserving_de
     push de
 endm
 
-; param l: mode ($00 = dialog, $01 = name (in dialog), $02 = tile)
-; return e: codepoint, highest 1 byte
-; return bc: codepoint, lower 2 bytes
+; param hl: Callback to read next byte
+; return wConvertedUnicode: converted utf-32 codepoint
 GetUTF8Char::
     ; We need to keep de value for '.file_menu' mode
     push de
@@ -31,7 +30,7 @@ GetUTF8Char::
     and a, $07
     rlca
     rlca
-    ld e, a
+    ld h, a
     read_next_byte_with_preserving_de
     push af
     and a, $30
@@ -94,6 +93,16 @@ GetUTF8Char::
     ld b, $00
     ld c, a
 .endUTF8
+    push af
+    xor a
+    ld [wConvertedUnicode + 0], a
+    ld a, h
+    ld [wConvertedUnicode + 1], a
+    ld a, b
+    ld [wConvertedUnicode + 2], a
+    ld a, c
+    ld [wConvertedUnicode + 3], a
+    pop af
     pop de
     ret
 
@@ -141,15 +150,19 @@ ReadNextByte::
     pop hl
     ret
 
+; param wConvertedUnicode: utf-32 value
 GetFontAddr::
-    call GetFontId
-    call GetFontOffset
-    ret
+    push af
+    ld a, [wConvertedUnicode + 1]
+    ld h, a
+    ld a, [wConvertedUnicode + 2]
+    ld b, a
+    ld a, [wConvertedUnicode + 3]
+    ld c, a
+    pop af
 
-; param h: codepoint, highest 1 byte
-; param bc: codepoint, lower 2 bytes
-GetFontId::
-    ; calculate bank number
+    ; Get Font ID
+    ; bank number
     ld a, h
     and a, $1f
     rlca
@@ -186,9 +199,7 @@ GetFontId::
     ld c, a
     pop af
 
-    ret
-
-GetFontOffset::
+; Get Font Address
     ld a, b
     and a, $fc
     rrca
