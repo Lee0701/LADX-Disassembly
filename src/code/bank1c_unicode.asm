@@ -105,6 +105,58 @@ UTF8_to_UTF32::
     pop de
     ret
 
+UTF16BE_to_UTF32::
+    push de
+    push af
+    and a, $db
+    xor a, $db
+    jr z, .surrogates
+
+    xor a
+    ld [wConvertedUnicode + 1], a
+    pop af
+    ld [wConvertedUnicode + 2], a
+    read_next_byte_with_preserving_de
+    ld [wConvertedUnicode + 3], a
+
+    jr .endUTF16
+
+.surrogates
+    pop af
+    and a, $03
+    rlca
+    rlca
+    ld c, a
+
+    read_next_byte_with_preserving_de
+    push af
+    and $c0
+    rlca
+    rlca
+    or c
+    inc a
+    ld [wConvertedUnicode + 1], a
+
+    pop af
+    and $3f
+    rlca
+    rlca
+    ld c, a
+
+    read_next_byte_with_preserving_de
+    and $03
+    or c
+    ld [wConvertedUnicode + 2], a
+
+    read_next_byte_with_preserving_de
+    ld [wConvertedUnicode + 3], a
+
+.endUTF16
+    xor a
+    ld [wConvertedUnicode + 0], a
+    pop de
+    ret
+
 ReadNextByte::
     push af
     ld a, l
@@ -127,9 +179,9 @@ ReadNextByte::
     pop af
     push hl
     push de
-    ld d, $00
     ld hl, wNameIndex
     ld a, [hl]
+    ld d, $00
     ld e, a
     inc a
     ld [wNameIndex], a
