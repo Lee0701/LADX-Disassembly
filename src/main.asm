@@ -343,7 +343,7 @@ include "data/dialogs/dialog_banks.asm"
 include "code/dialog_letters.asm"
 include "text/dialog_3.asm"
 include "constants/charmaps/text_entry_table.asm"
-include "code/bank1c_utf8.asm"
+include "code/bank1c_unicode.asm"
 include "code/bank1c_text.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
