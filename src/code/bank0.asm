@@ -814,7 +814,7 @@ ReadTileValueFromUTF8Table::
     ; Tile mode
     ld l, $02
     pop af
-    call GetUTF8Char
+    call UTF8_to_UTF32
     call GetFontAddr
     push af
     ld a, e

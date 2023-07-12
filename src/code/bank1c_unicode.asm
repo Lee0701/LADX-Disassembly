@@ -6,12 +6,11 @@ macro read_next_byte_with_preserving_de
     push de
 endm
 
-; param hl: Callback to read next byte
-; return wConvertedUnicode: converted utf-32 codepoint
-GetUTF8Char::
+; param l: mode ($00 = dialog, $01 = name (in dialog), $02 = tile)
+; return wConvertedUnicode: utf-32 codepoint
+UTF8_to_UTF32::
     ; We need to keep de value for '.file_menu' mode
     push de
-    ld e, $00
     ld h, $00
 
     bit 7, a
@@ -39,7 +38,7 @@ GetUTF8Char::
     rrca
     rrca
     or h
-    ld e, a
+    ld h, a
     pop af
     and a, $0f
     rlca
@@ -76,7 +75,7 @@ GetUTF8Char::
     rrca
     rrca
     ld b, a
-    jr .lastByte
+
 .lastByte
     pop af
     and a, $03
