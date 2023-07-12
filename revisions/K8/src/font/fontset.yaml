@@ -35,3 +35,9 @@ fontset:
     charset: charset-hanja-ks1001.txt
     offset_x: 0
     offset_y: 0
+  - type: bitmap
+    file_name: bitmap.png
+    font_size: 8
+    charset: charset-bitmap.txt
+    offset_x: 0
+    offset_y: 0
