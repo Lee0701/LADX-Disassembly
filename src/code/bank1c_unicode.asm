@@ -28,76 +28,12 @@ GetUTF8Char::
     jr .endUTF8
 
 .quadByte
-    call PreQuadByte
-    read_next_byte_with_preserving_de
-    push af
-    call MidQuadByte1
-    pop af
-    call MidQuadByte2
-    read_next_byte_with_preserving_de
-    push af
-    call PostQuadByte
-    jr .lastByte
-.tripleByte
-    call PreTripleByte
-    read_next_byte_with_preserving_de
-    push af
-    call PostTripleByte
-    jr .lastByte
-.doubleByte
-    push af
-    call DoubleByte
-    jr .lastByte
-.lastByte
-    pop af
-    call PreLastByte
-    read_next_byte_with_preserving_de
-    call PostLastByte
-    jr .endUTF8
-.singleByte
-    call SingleByte
-.endUTF8
-    pop de
-    ret
-
-SingleByte::
-    and a, $7f
-    ld b, $00
-    ld c, a
-    ret
-
-DoubleByte::
-    and a, $1c
-    rrca
-    rrca
-    ld b, a
-    ret
-
-PreTripleByte::
-    and a, $0f
-    rlca
-    rlca
-    rlca
-    rlca
-    ld b, a
-    ret
-
-PostTripleByte::
-    and a, $3c
-    rrca
-    rrca
-    or b
-    ld b, a
-    ret
-
-PreQuadByte::
     and a, $07
     rlca
     rlca
     ld e, a
-    ret
-
-MidQuadByte1::
+    read_next_byte_with_preserving_de
+    push af
     and a, $30
     rrca
     rrca
@@ -105,36 +41,60 @@ MidQuadByte1::
     rrca
     or h
     ld e, a
-    ret
-
-MidQuadByte2::
+    pop af
     and a, $0f
     rlca
     rlca
     rlca
     rlca
     ld b, a
-    ret
-
-PostQuadByte::
+    read_next_byte_with_preserving_de
+    push af
     and a, $3c
     rrca
     rrca
     or b
     ld b, a
-    ret
-
-PreLastByte::
+    jr .lastByte
+.tripleByte
+    and a, $0f
+    rlca
+    rlca
+    rlca
+    rlca
+    ld b, a
+    read_next_byte_with_preserving_de
+    push af
+    and a, $3c
+    rrca
+    rrca
+    or b
+    ld b, a
+    jr .lastByte
+.doubleByte
+    push af
+    and a, $1c
+    rrca
+    rrca
+    ld b, a
+    jr .lastByte
+.lastByte
+    pop af
     and a, $03
     rrca
     rrca
     ld c, a
-    ret
-
-PostLastByte::
+    read_next_byte_with_preserving_de
     and a, $3f
     or c
     ld c, a
+    jr .endUTF8
+.singleByte
+    and a, $7f
+    ld b, $00
+    ld c, a
+.endUTF8
+    pop de
     ret
 
 ReadNextByte::
