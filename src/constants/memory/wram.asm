@@ -907,7 +907,7 @@ wC1C3::
 wC1C4::
   ds 1 ; C1C4
 
-; not used
+; unused
 ds 1 ; C1C5
 
 ; Unlabeled
@@ -1493,7 +1493,7 @@ wNextWorldMusicTrackCountdown::
 wSwordCollisionEnabled::
   ds 1 ; C5B0
 
-; not used
+; unused
 wC5B1::
   ds 15 ; C5B1- C5BF
 
@@ -1502,7 +1502,7 @@ wC5C0::
   ds $10 ; C5C0 - C5CF
 
 ; Unlabeled
-; check for not used addresses
+; check for unused addresses
 wC5D0::
   ds $8B0 ; C5D0 - CE7F
 
@@ -1514,7 +1514,7 @@ wRecentRoomsIndex::
 wRecentRooms::
   ds 6 ; CE81
 
-; not used
+; unused
 wCE87::
   ds $79
 
@@ -1673,7 +1673,7 @@ wD021::
 wD022::
   ds 1 ; D022
 
-; not used
+; unused
 ; TODO check if never used
 wD023::
   ds 13 ; D023 - D02F
@@ -1694,7 +1694,7 @@ wD050::
 wD060::
   ds $10 ; D060 - D06F
 
-; not used
+; unused
 ; TODO check if never used
 wD070::
   ds $90 ; D070 - D0FF
@@ -2249,7 +2249,7 @@ wD227::
 wD228::
   ds 1 ; D228
 
-; not used
+; unused
 wD229::
   ds 215 ; D220 - D2FF
 
@@ -2267,7 +2267,7 @@ wMusicTranspose::
 wMusicSpeedPointer::
   ds 2 ; D301 - D302
 
-; not used
+; unused
 wD303::
   ds 4 ; D303 - D306
 
@@ -2574,7 +2574,7 @@ wD3CA::
 wPreviousMusicTrack::
   ds 1 ; D3CB
 
-; not used
+; unused
 wD3CC::
   ds 1 ; D3CC
 
@@ -2725,7 +2725,7 @@ wWarp2PositionTileIndex::
 wWarp3PositionTileIndex::
   ds 1 ; D419
 
-; not used
+; unused
 wD41A::
   ds 68 ; D41A - D45D
 
@@ -2766,7 +2766,7 @@ wD465::
 wD466::
   ds 1 ; D466
 
-; not used
+; unused
 wD467::
   ds 1 ; D467
 
@@ -2774,7 +2774,7 @@ wD467::
 wD468::
   ds 1 ; D463
 
-; not used
+; unused
 wD469::
   ds 2 ; D469 - D46A
 
@@ -2786,7 +2786,7 @@ wD46B::
 wBossDefeated::
   ds 1 ; D46C
 
-; not used
+; unused
 wD45D::
   ds 4 ; D45D - D470
 
@@ -2810,7 +2810,7 @@ wD474::
 wD475::
   ds 1 ; D475
 
-; not used
+; unused
 wD476::
   ds 1 ; D476
 
@@ -2856,7 +2856,7 @@ wD47F::
 wDungeonMinimap::
   ds $40 ; D480 - D4DF
 
-; not used
+; unused
 wD4C0::
   ds $40 ; D4C0 - D4FF
 
@@ -2877,7 +2877,7 @@ wD5C0:
 wD5C2::
   ds 2 ; D5C2
 
-; not used
+; unused
 wD5C4::
   ds 60 ; D5C4 - D600
 
@@ -3412,8 +3412,9 @@ wOBJ1Palette::
 wWindowY::
   ds 1 ; DB9A
 
-; not used
-wDB9A::
+; unused -> Unicode
+; wDB9A::
+wDialogCharacterOutIndex::
   ds 1
 
 ; Initial room of Link when loading a new map
@@ -3428,16 +3429,18 @@ wMapEntrancePositionX::
 wMapEntrancePositionY::
   ds 1 ; DB9E
 
-; not used
-wDB9F::
+; unused -> Unicode
+; wDB9F::
+wConvertedUnicode::
   ds 4 ; DB9F - DBA2
 
 ; Selected index in the inventory menu
 wInventorySelection::
   ds 1 ; DBA3
 
-; not used
-wDBA4::
+; unused -> Unicode
+; wDBA4::
+wConvertedUnicodeIndex::
   ds 1 ; DBA4
 
 ; 0 = the overworld
@@ -3507,7 +3510,7 @@ wLinkMapEntryPositionX::
 wLinkMapEntryPositionY::
   ds 1 ; DBB2
 
-; not used
+; unused
 wDBB3::
   ds 1 ; DBB3
 
@@ -3543,7 +3546,7 @@ wDBC8::
 wTorchesCount::
   ds 1 ; DBC9
 
-; not used
+; unused
 wDBCA::
   ds 1 ; DBCA
 
@@ -3848,10 +3851,6 @@ wDE0A:
 ; maybe flag to play different music in dialog before fight.
 wDE0B:
   ds 1 ; DE0B
-
-; UTF-8
-wDialogCharacterOutIndex:
-  ds 1
 
 ; top of WRAM is used as Stack
 wStack::

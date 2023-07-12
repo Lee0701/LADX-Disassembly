@@ -7,12 +7,10 @@ macro read_next_byte_with_preserving_de
 endm
 
 ; param l: mode ($00 = dialog, $01 = name (in dialog), $02 = tile)
-; return e: codepoint, highest 1 byte
-; return bc: codepoint, lower 2 bytes
-GetUTF8Char::
+; return wConvertedUnicode: utf-32 codepoint
+UTF8_to_UTF32::
     ; We need to keep de value for '.file_menu' mode
     push de
-    ld e, $00
     ld h, $00
 
     bit 7, a
@@ -28,113 +26,83 @@ GetUTF8Char::
     jr .endUTF8
 
 .quadByte
-    call PreQuadByte
-    read_next_byte_with_preserving_de
-    push af
-    call MidQuadByte1
-    pop af
-    call MidQuadByte2
-    read_next_byte_with_preserving_de
-    push af
-    call PostQuadByte
-    jr .lastByte
-.tripleByte
-    call PreTripleByte
-    read_next_byte_with_preserving_de
-    push af
-    call PostTripleByte
-    jr .lastByte
-.doubleByte
-    push af
-    call DoubleByte
-    jr .lastByte
-.lastByte
-    pop af
-    call PreLastByte
-    read_next_byte_with_preserving_de
-    call PostLastByte
-    jr .endUTF8
-.singleByte
-    call SingleByte
-.endUTF8
-    pop de
-    ret
-
-SingleByte::
-    and a, $7f
-    ld b, $00
-    ld c, a
-    ret
-
-DoubleByte::
-    and a, $1c
-    rrca
-    rrca
-    ld b, a
-    ret
-
-PreTripleByte::
-    and a, $0f
-    rlca
-    rlca
-    rlca
-    rlca
-    ld b, a
-    ret
-
-PostTripleByte::
-    and a, $3c
-    rrca
-    rrca
-    or b
-    ld b, a
-    ret
-
-PreQuadByte::
     and a, $07
     rlca
     rlca
-    ld e, a
-    ret
-
-MidQuadByte1::
+    ld h, a
+    read_next_byte_with_preserving_de
+    push af
     and a, $30
     rrca
     rrca
     rrca
     rrca
     or h
-    ld e, a
-    ret
-
-MidQuadByte2::
+    ld h, a
+    pop af
     and a, $0f
     rlca
     rlca
     rlca
     rlca
     ld b, a
-    ret
-
-PostQuadByte::
+    read_next_byte_with_preserving_de
+    push af
     and a, $3c
     rrca
     rrca
     or b
     ld b, a
-    ret
+    jr .lastByte
+.tripleByte
+    and a, $0f
+    rlca
+    rlca
+    rlca
+    rlca
+    ld b, a
+    read_next_byte_with_preserving_de
+    push af
+    and a, $3c
+    rrca
+    rrca
+    or b
+    ld b, a
+    jr .lastByte
+.doubleByte
+    push af
+    and a, $1c
+    rrca
+    rrca
+    ld b, a
 
-PreLastByte::
+.lastByte
+    pop af
     and a, $03
     rrca
     rrca
     ld c, a
-    ret
-
-PostLastByte::
+    read_next_byte_with_preserving_de
     and a, $3f
     or c
     ld c, a
+    jr .endUTF8
+.singleByte
+    and a, $7f
+    ld b, $00
+    ld c, a
+.endUTF8
+    push af
+    xor a
+    ld [wConvertedUnicode + 0], a
+    ld a, h
+    ld [wConvertedUnicode + 1], a
+    ld a, b
+    ld [wConvertedUnicode + 2], a
+    ld a, c
+    ld [wConvertedUnicode + 3], a
+    pop af
+    pop de
     ret
 
 ReadNextByte::
@@ -181,15 +149,19 @@ ReadNextByte::
     pop hl
     ret
 
+; param wConvertedUnicode: utf-32 value
 GetFontAddr::
-    call GetFontId
-    call GetFontOffset
-    ret
+    push af
+    ld a, [wConvertedUnicode + 1]
+    ld h, a
+    ld a, [wConvertedUnicode + 2]
+    ld b, a
+    ld a, [wConvertedUnicode + 3]
+    ld c, a
+    pop af
 
-; param h: codepoint, highest 1 byte
-; param bc: codepoint, lower 2 bytes
-GetFontId::
-    ; calculate bank number
+    ; Get Font ID
+    ; bank number
     ld a, h
     and a, $1f
     rlca
@@ -226,9 +198,7 @@ GetFontId::
     ld c, a
     pop af
 
-    ret
-
-GetFontOffset::
+; Get Font Address
     ld a, b
     and a, $fc
     rrca
