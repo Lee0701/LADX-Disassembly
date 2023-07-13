@@ -131,10 +131,14 @@ azlk_asm = $(shell find revisions/K8 -type f -name '*.asm')
 azlk_gfx = $(shell find revisions/K8 -type f -name '*.png')
 azlk_bin = $(shell find revisions/K8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
 
-azlk_font_dir = revisions/K8/src/gfx/fonts
+azlk_src_dir = revisions/K8/src
+azlk_font_dir = $(azlk_src_dir)/gfx/fonts
 azlk_font_png = $(azlk_font_dir)/font_unicode.png
 azlk_font_bin = $(azlk_font_dir)/font_unicode.2bpp
 azlk_font_table = $(azlk_font_dir)/font_unicode_table.asm
+
+$(azlk_src_dir)/data/backgrounds/menu_file_creation.tilemap.encoded: $(azlk_src_dir)/data/backgrounds/menu_file_creation.tilemap.decoded
+	$(PYTHON) tools/convert_background.py encode -o $@ $<
 
 $(azlk_font_table) $(azlk_font_png): revisions/K8/src/font/fontset.yaml
 	mkdir -p $(azlk_font_dir)
