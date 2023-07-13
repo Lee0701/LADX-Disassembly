@@ -57,7 +57,7 @@ FXFLAGS := \
 
 # Default target: build and test only the US 1.0 revision.
 # (Use `make all` to build and test all targets.)
-default: build test
+default: all
 
 #
 # Generic rules
@@ -98,139 +98,89 @@ src/main.%.o: src/main.asm $(asm_files) $(gfx_files:.png=.2bpp) $(bin_files)
 Makefile: ;
 
 #
-# Japanese
-#
-
-azlj_asm = $(shell find revisions/J0 -type f -name '*.asm')
-azlj_gfx = $(shell find revisions/J0 -type f -name '*.png')
-azlj_bin = $(shell find revisions/J0 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
-
-games += azlj.gbc
-src/main.azlj.o: $(azlj_asm) $(azlj_gfx:.png=.2bpp) $(azlj_bin)
-azlj_ASFLAGS = -DLANG=JP -DVERSION=0 -i revisions/J0/src/
-azlj_FXFLAGS = --rom-version 0 --title "ZELDA"
-
-games += azlj-r1.gbc
-src/main.azlj-r1.o: $(azlj_asm) $(azlj_gfx:.png=.2bpp) $(azlj_bin)
-azlj-r1_ASFLAGS = -DLANG=JP -DVERSION=1 -i revisions/J0/src/
-azlj-r1_FXFLAGS = --rom-version 1 --title "ZELDA"
-
-games += azlj-r2.gbc
-src/main.azlj-r2.o: $(azlj_asm) $(azlj_gfx:.png=.2bpp) $(azlj_bin)
-azlj-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/J0/src/
-azlj-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLJ"
-
-#
 # UTF-8 (ko_KORE)
 #
 
-azlk_lang = ko_KORE
+azuk_lang = ko_KORE
 base_lang = ja
 
-azlk_asm = $(shell find revisions/K8 -type f -name '*.asm')
-azlk_gfx = $(shell find revisions/K8 -type f -name '*.png')
-azlk_bin = $(shell find revisions/K8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
+azuk_asm = $(shell find revisions/K8 -type f -name '*.asm')
+azuk_gfx = $(shell find revisions/K8 -type f -name '*.png')
+azuk_bin = $(shell find revisions/K8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
 
-azlk_src_dir = revisions/K8/src
-azlk_font_dir = $(azlk_src_dir)/gfx/fonts
-azlk_font_png = $(azlk_font_dir)/font_unicode.png
-azlk_font_bin = $(azlk_font_dir)/font_unicode.2bpp
-azlk_font_table = $(azlk_font_dir)/font_unicode_table.asm
+azuk_src_dir = revisions/K8/src
+azuk_font_dir = $(azuk_src_dir)/gfx/fonts
+azuk_font_png = $(azuk_font_dir)/font_unicode.png
+azuk_font_bin = $(azuk_font_dir)/font_unicode.2bpp
+azuk_font_table = $(azuk_font_dir)/font_unicode_table.asm
 
-$(azlk_src_dir)/data/backgrounds/menu_file_creation.tilemap.encoded: $(azlk_src_dir)/data/backgrounds/menu_file_creation.tilemap.decoded
+$(azuk_src_dir)/data/backgrounds/menu_file_creation.tilemap.encoded: $(azuk_src_dir)/data/backgrounds/menu_file_creation.tilemap.decoded
 	$(PYTHON) tools/convert_background.py encode -o $@ $<
 
-$(azlk_font_table) $(azlk_font_png): revisions/K8/src/font/fontset.yaml
-	mkdir -p $(azlk_font_dir)
-	$(PYTHON) tools/utf-8/generate_fontset.py $< $(azlk_font_table) $(azlk_font_png) 50
+$(azuk_font_table) $(azuk_font_png): revisions/K8/src/font/fontset.yaml
+	mkdir -p $(azuk_font_dir)
+	$(PYTHON) tools/utf-8/generate_fontset.py $< $(azuk_font_table) $(azuk_font_png) 50
 
-$(azlk_font_bin): $(azlk_font_png) $(azlk_font_table)
-	mkdir -p $(azlk_font_dir)
+$(azuk_font_bin): $(azuk_font_png) $(azuk_font_table)
+	mkdir -p $(azuk_font_dir)
 	$(2BPP) -o $@ $<
 
-azlk_text = revisions/K8/src/text/dialog.asm
-$(azlk_text): weblate/$(azlk_lang)/dialog.yaml weblate/$(base_lang)/dialog.yaml $(azlk_font_bin)
+azuk_text = revisions/K8/src/text/dialog.asm
+$(azuk_text): weblate/$(azuk_lang)/dialog.yaml weblate/$(base_lang)/dialog.yaml $(azuk_font_bin)
 	$(PYTHON) tools/utf-8/import_dialog.py weblate/$(base_lang)/dialog.yaml $< $@
 	$(PYTHON) tools/utf-8/split_sections.py $@ $@
 
-games += azlk-r2.gbc
-src/main.azlk-r2.o: $(azlk_font_bin) $(azlk_font_table) $(azlk_text) $(azlk_asm) $(azlk_gfx:.png=.2bpp) $(azlk_bin)
-azlk-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/K8/src/
-azlk-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "azlk"
+games += azuk-r2.gbc
+src/main.azuk-r2.o: $(azuk_font_bin) $(azuk_font_table) $(azuk_text) $(azuk_asm) $(azuk_gfx:.png=.2bpp) $(azuk_bin)
+azuk-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/K8/src/
+azuk-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "azuk"
 
 #
 # UTF-8 (ja_JPAN)
 #
 
-azlj_lang = ja_JPAN
+azuj_lang = ja_JPAN
 base_lang = ja
 
-azlj_asm = $(shell find revisions/J8 -type f -name '*.asm')
-azlj_gfx = $(shell find revisions/J8 -type f -name '*.png')
-azlj_bin = $(shell find revisions/J8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
+azuj_asm = $(shell find revisions/J8 -type f -name '*.asm')
+azuj_gfx = $(shell find revisions/J8 -type f -name '*.png')
+azuj_bin = $(shell find revisions/J8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
 
-azlj_font_dir = revisions/J8/src/gfx/fonts
-azlj_font_png = $(azlj_font_dir)/font_unicode.png
-azlj_font_bin = $(azlj_font_dir)/font_unicode.2bpp
-azlj_font_table = $(azlj_font_dir)/font_unicode_table.asm
+azuj_src_dir = revisions/J8/src
+azuj_font_dir = $(azuj_src_dir)/gfx/fonts
+azuj_font_png = $(azuj_font_dir)/font_unicode.png
+azuj_font_bin = $(azuj_font_dir)/font_unicode.2bpp
+azuj_font_table = $(azuj_font_dir)/font_unicode_table.asm
 
-$(azlj_font_table) $(azlj_font_png): revisions/J8/src/font/fontset.yaml
-	mkdir -p $(azlj_font_dir)
-	$(PYTHON) tools/utf-8/generate_fontset.py $< $(azlj_font_table) $(azlj_font_png) 50
+$(azuj_font_table) $(azuj_font_png): revisions/J8/src/font/fontset.yaml
+	mkdir -p $(azuj_font_dir)
+	$(PYTHON) tools/utf-8/generate_fontset.py $< $(azuj_font_table) $(azuj_font_png) 50
 
-$(azlj_font_bin): $(azlj_font_png) $(azlj_font_table)
-	mkdir -p $(azlj_font_dir)
+$(azuj_font_bin): $(azuj_font_png) $(azuj_font_table)
+	mkdir -p $(azuj_font_dir)
 	$(2BPP) -o $@ $<
 
-azlj_text = revisions/J8/src/text/dialog.asm
-$(azlj_text): weblate/$(azlj_lang)/dialog.yaml weblate/$(base_lang)/dialog.yaml $(azlj_font_bin)
+azuj_text = revisions/J8/src/text/dialog.asm
+$(azuj_text): weblate/$(azuj_lang)/dialog.yaml weblate/$(base_lang)/dialog.yaml $(azuj_font_bin)
 	$(PYTHON) tools/utf-8/import_dialog.py weblate/$(base_lang)/dialog.yaml $< $@
 	$(PYTHON) tools/utf-8/split_sections.py $@ $@
 
-games += azlj-r2.gbc
-src/main.azlj-r2.o: $(azlj_font_bin) $(azlj_font_table) $(azlj_text) $(azlj_asm) $(azlj_gfx:.png=.2bpp) $(azlj_bin)
-azlj-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/J8/src/
-azlj-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "azlj"
-
-#
-# English
-#
-
-games += azle.gbc
-src/main.azle.o:
-azle_ASFLAGS = -DLANG=EN -DVERSION=0
-azle_FXFLAGS = --rom-version 0 --non-japanese --title "ZELDA"
-
-games += azle-r1.gbc
-src/main.azle-r1.o:
-azle-r1_ASFLAGS = -DLANG=EN -DVERSION=1
-azle-r1_FXFLAGS = --rom-version 1 --non-japanese --title "ZELDA"
-
-games += azle-r2.gbc
-src/main.azle-r2.o: azlf-r1.gbc
-azle-r2_ASFLAGS = -DLANG=EN -DVERSION=2
-azle-r2_LDFLAGS = -O azlf-r1.gbc
-azle-r2_FXFLAGS = --rom-version 2 --non-japanese --title "ZELDA" --game-id "AZLE"
+games += azuj-r2.gbc
+src/main.azuj-r2.o: $(azuj_font_bin) $(azuj_font_table) $(azuj_text) $(azuj_asm) $(azuj_gfx:.png=.2bpp) $(azuj_bin)
+azuj-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -i revisions/J8/src/
+azuj-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "azuj"
 
 #
 # Main targets
 #
 
 # By default, build the US 1.0 revision.
-build: azlk-r2.gbc
+build: azuk-r2.gbc
 
 # Build all revisions.
 build-all: $(games)
 
-# Test the default revision.
-test: build
-	@tools/compare.sh ladx.md5 azlk-r2.gbc
-
-# Test all revisions.
-test-all: build-all
-	@tools/compare.sh ladx.md5 $(games)
-
-all: build-all test-all
+all: build-all
 
 clean:
 	rm -f $(games)
@@ -239,3 +189,5 @@ clean:
 	rm -f $(games:.gbc=.sym)
 	rm -f $(gfx_files:.png=.2bpp)
 	rm -f $(azlj_gfx:.png=.2bpp)
+	rm -f $(azuj_gfx:.png=.2bpp)
+	rm -f $(azuk_gfx:.png=.2bpp)
