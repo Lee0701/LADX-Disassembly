@@ -345,6 +345,7 @@ include "text/dialog_3.asm"
 include "constants/charmaps/text_entry_table.asm"
 include "code/bank1c_unicode.asm"
 include "code/bank1c_text.asm"
+include "code/bank1c_input.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
 include "text/dialog_4.asm"
