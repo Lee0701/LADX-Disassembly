@@ -746,9 +746,9 @@ func_001_4C8A:: ; "Enter Name" screen
     and  J_A | J_B ; Was A or B pushed?           ; $4C8C: $E6 $30
     jr   z, jr_001_4CB7 ; If no, bail             ; $4C8E: $28 $27
     bit  J_BIT_B, a ; Was B pushed?               ; $4C90: $CB $6F
-    jr   nz, .jr_4CA7 ; If yes, backspace         ; $4C92: $20 $13
+    jr   nz, .backspace ; If yes, backspace         ; $4C92: $20 $13
     call PlayValidationJingle ; Otherwise, A was pushed ; $4C94: $CD $BE $49
-    call func_001_4CDA ; so add the current letter ; $4C97: $CD $DA $4C
+    call FileCreationAddCurrentChar ; so add the current letter ; $4C97: $CD $DA $4C
     ld   a, [wSaveSlotNameCharIndex]              ; $4C9A: $FA $AA $DB
     add  a, $01                                   ; $4C9D: $C6 $01
     cp   NAME_LENGTH ; Prevent cursor from going > 5th place ; $4C9F: $FE $05
@@ -756,20 +756,28 @@ func_001_4C8A:: ; "Enter Name" screen
     ld   a, $04                                   ; $4CA3: $3E $04
     jr   jr_001_4CB4                              ; $4CA5: $18 $0D
 
-.jr_4CA7::
+.backspace::
     ; B button when inputting filename
     call PlayValidationJingle                     ; $4CA7: $CD $BE $49
-    ld   a, [wSaveSlotNameCharIndex]              ; $4CAA: $FA $AA $DB
-    sub  a, $01                                   ; $4CAD: $D6 $01
-    cp   $FF                                      ; $4CAF: $FE $FF
+    ld hl, wMenuCharacterOutIndex
+    dec [hl]
+    ld a, [wSaveSlotNameCharIndex]
+    sub a, $02
+    ; ld   a, [wSaveSlotNameCharIndex]              ; $4CAA: $FA $AA $DB
+    ; sub  a, $01                                   ; $4CAD: $D6 $01
+    ; cp   $FF                                      ; $4CAF: $FE $FF
+    cp $fe
+    ; or a
     jr   nz, jr_001_4CB4                          ; $4CB1: $20 $01
+    xor a
+    ld [wMenuCharacterOutIndex], a
     xor  a ; Prevent cursor from going < 1st place ; $4CB3: $AF
 
 jr_001_4CB4::
     ld   [wSaveSlotNameCharIndex], a              ; $4CB4: $EA $AA $DB
 
 jr_001_4CB7::
-    ld   a, [wSaveSlotNameCharIndex]              ; $4CB7: $FA $AA $DB
+    ld   a, [wMenuCharacterOutIndex]              ; $4CB7: $FA $AA $DB
     ld   hl, Data_001_4BB0                        ; $4CBA: $21 $B0 $4B
     ld   c, a                                     ; $4CBD: $4F
     ld   b, $00                                   ; $4CBE: $06 $00
@@ -793,8 +801,8 @@ jr_001_4CB7::
 .return
     ret                                           ; $4CD9: $C9
 
-func_001_4CDA::
-    jp Call_Bank1C_func_001_4CDA
+FileCreationAddCurrentChar::
+    jp Call_Bank1C_FileCreationAddCurrentChar
 
 ; -----------------------------------------------------------------------------
 ;

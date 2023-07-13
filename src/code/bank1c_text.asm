@@ -1086,7 +1086,7 @@ AppendDrawCommand::
     ret
 
 
-Bank1C_func_001_4CDA::
+Bank1C_FileCreationAddCurrentChar::
     push de
     ld   a, [wNameEntryCurrentChar]               ; $4CDA: $FA $A9 $DB
     ld   c, a                                     ; $4CDD: $4F
@@ -1142,8 +1142,11 @@ Bank1C_func_001_4CDA::
     jr nz, .char_loop
 
 ; Increment cursor index
-    ; ld hl, wSaveSlotNameCharIndex
-    ; ld a, d
+    ld hl, wSaveSlotNameCharIndex
+    inc [hl]
+    ld hl, wMenuCharacterOutIndex
+    inc [hl]
+    ; xor a
     ; ldi [hl], a
     ; ld a, e
     ; ld [hl], a

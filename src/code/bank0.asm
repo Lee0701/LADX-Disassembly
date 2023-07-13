@@ -794,10 +794,10 @@ Call_Bank1C_DrawSaveSlotName::
     ld [rSelectROMBank], a
     ret
 
-Call_Bank1C_func_001_4CDA::
+Call_Bank1C_FileCreationAddCurrentChar::
     ld a, $1c
     ld [rSelectROMBank], a
-    call Bank1C_func_001_4CDA
+    call Bank1C_FileCreationAddCurrentChar
     ld a, $01
     ld [rSelectROMBank], a
     ret
