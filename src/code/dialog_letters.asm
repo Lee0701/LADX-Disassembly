@@ -1,6 +1,6 @@
 ; Configure a wDrawCommand to write pixels for a black tile to the VRAM of the next letter.
 ClearLetterPixels::
-    ld   a, [wDialogCharacterOutIndex]               ; $49F1: $FA $70 $C1
+    ld   a, [wDialogCharacterIndex]               ; $49F1: $FA $70 $C1
     and  %00011111                                ; $49F4: $E6 $1F
     ld   e, a                                     ; $49F6: $5F
     ld   d, $00                                   ; $49F7: $16 $00
