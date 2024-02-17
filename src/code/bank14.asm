@@ -1310,6 +1310,74 @@ jr_014_5409:
 label_014_5443:
     ret                                           ; $5443: $C9
 
+jr_014_5444:
+    xor  a                                        ; $5444: $AF
+    ld   [wDialogState], a                        ; $5445: $EA $9F $C1
+    ret                                           ; $5448: $C9
+
+DialogOpenAnimationStart::
+    ld   a, [wC3C9]                               ; $5449: $FA $C9 $C3
+    and  a                                        ; $544C: $A7
+    jr   nz, .jr_545A                             ; $544D: $20 $0B
+
+    ld   a, [wLinkMotionState]                    ; $544F: $FA $1C $C1
+    cp   LINK_MOTION_MAP_FADE_OUT                 ; $5452: $FE $03
+    jr   z, jr_014_5444                           ; $5454: $28 $EE
+
+    cp   LINK_MOTION_MAP_FADE_IN                  ; $5456: $FE $04
+    jr   z, jr_014_5444                           ; $5458: $28 $EA
+
+.jr_545A
+    ld   a, [wGameplayType]                       ; $545A: $FA $95 $DB
+    cp   GAMEPLAY_CREDITS                         ; $545D: $FE $01
+    jr   z, .jr_547F                              ; $545F: $28 $1E
+
+    ld   a, [wObjectAffectingBGPalette]           ; $5461: $FA $CB $C3
+    and  a                                        ; $5464: $A7
+    jr   nz, .jr_547F                             ; $5465: $20 $18
+
+    ldh  a, [hLinkAnimationState]                 ; $5467: $F0 $9D
+    cp   LINK_ANIMATION_STATE_GOT_ITEM            ; $5469: $FE $6C
+    jr   z, .jr_547F                              ; $546B: $28 $12
+
+    ld   a, $04                                   ; $546D: $3E $04
+    ld   [wTransitionSequenceCounter], a          ; $546F: $EA $6B $C1
+    ld   a, $E4                                   ; $5472: $3E $E4
+    ld   [wBGPalette], a                          ; $5474: $EA $97 $DB
+    ld   [wOBJ1Palette], a                        ; $5477: $EA $99 $DB
+    ld   a, $1C                                   ; $547A: $3E $1C
+    ld   [wOBJ0Palette], a                        ; $547C: $EA $98 $DB
+
+.jr_547F
+    ld   a, [wDrawCommand]                        ; $547F: $FA $01 $D6
+    and  a                                        ; $5482: $A7
+    ret  nz                                       ; $5483: $C0
+
+    ld   hl, wDialogState                         ; $5484: $21 $9F $C1
+    inc  [hl]                                     ; $5487: $34
+    ldh  a, [hIsGBC]                              ; $5488: $F0 $FE
+    and  a                                        ; $548A: $A7
+    ret  z                                        ; $548B: $C8
+
+    ld   a, [wGameplayType]                       ; $548C: $FA $95 $DB
+    cp   GAMEPLAY_WORLD                           ; $548F: $FE $0B
+    ret  nz                                       ; $5491: $C0
+
+    ld   a, [wBGPaletteEffectAddress]             ; $5492: $FA $CC $C3
+    cp   $08                                      ; $5495: $FE $08
+    ret  c                                        ; $5497: $D8
+
+    ld   hl, wFarcallParams                       ; $5498: $21 $01 $DE
+    ld   a, BANK(func_021_53B6)                   ; $549B: $3E $21
+    ld   [hl+], a                                 ; $549D: $22
+    ld   a, HIGH(func_021_53B6)                   ; $549E: $3E $53
+    ld   [hl+], a                                 ; $54A0: $22
+    ld   a, LOW(func_021_53B6)                    ; $54A1: $3E $B6
+    ld   [hl+], a                                 ; $54A3: $22
+    ld   a, BANK(@)                               ; $54A4: $3E $14
+    ld   [wFarcallReturnBank], a                  ; $54A6: $EA $04 $DE
+    jp   Farcall                                  ; $54A9: $C3 $D7 $0B
+
 func_014_54AC::
     ld   hl, wFreeMovementMode                    ; $54AC: $21 $7B $C1
     ld   a, [wRoomTransitionState]                ; $54AF: $FA $24 $C1

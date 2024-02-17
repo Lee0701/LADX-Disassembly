@@ -268,9 +268,7 @@ InterruptVBlank::
     jr   nc, .renderDialogText                    ; $04A0: $30 $0A
     ; DialogState < 5
     ; Open dialog
-    callsb func_23E4                                ; $04A2: $CD $E4 $23
-    ; TODO: Check if this works
-    call ReloadSavedBank
+    call func_23E4                                ; $04A2: $CD $E4 $23
     ld   hl, wDialogState                         ; $04A5: $21 $9F $C1
     inc  [hl]  ; Increment DialogState            ; $04A8: $34
     jp   .vblankDone                              ; $04A9: $C3 $69 $05
@@ -280,9 +278,7 @@ InterruptVBlank::
     cp   DIALOG_SCROLLING_1                       ; $04AC: $FE $0A
     jr   nz, .dialogScrolling1End                 ; $04AE: $20 $06
     ; DialogState == Scrolling1
-    callsb DialogBeginScrolling                     ; $04B0: $CD $19 $27
-    ; TODO: Check if this works
-    call ReloadSavedBank
+    call DialogBeginScrolling                     ; $04B0: $CD $19 $27
     jp   .vblankDone                              ; $04B3: $C3 $69 $05
 .dialogScrolling1End
 
@@ -298,9 +294,7 @@ InterruptVBlank::
     jr   .dialogEnd                               ; $04C4: $18 $06
 
 .dialogFinishScrolling
-    callsb DialogFinishScrolling                    ; $04C6: $CD $6D $27
-    ; TODO: Check if this works
-    call ReloadSavedBank
+    call DialogFinishScrolling                    ; $04C6: $CD $6D $27
     jp   .vblankDone                              ; $04C9: $C3 $69 $05
 .dialogEnd
 

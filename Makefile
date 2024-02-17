@@ -31,6 +31,8 @@ FXFLAGS := \
   --pad-value 0xFF \
   --validate
 
+PYTHON := python
+
 # Default target: build and test only the US 1.0 revision.
 # (Use `make all` to build and test all targets.)
 default: build test
@@ -72,6 +74,50 @@ src/main.%.o: src/main.asm $(asm_files) $(gfx_files:.png=.2bpp) $(bin_files)
 
 # Make may attempt to re-generate the Makefile; prevent this.
 Makefile: ;
+
+#
+# Unicode
+#
+
+azlu_lang = ja
+base_lang = ja
+
+azlu_asm = $(shell find revisions/U8 -type f -name '*.asm')
+azlu_gfx = $(shell find revisions/U8 -type f -name '*.png')
+azlu_bin = $(shell find revisions/U8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
+
+azlu_font_dir = revisions/U8/src/gfx/fonts
+azlu_font_png = $(azlu_font_dir)/font_unicode.png
+azlu_font_bin = $(azlu_font_dir)/font_unicode.2bpp
+azlu_font_table = $(azlu_font_dir)/font_unicode_table.asm
+
+$(azlu_font_table) $(azlu_font_png): revisions/U8/src/font/fontset.yaml
+	mkdir -p $(azlu_font_dir)
+	$(PYTHON) tools/unicode/generate_fontset.py $< $(azlu_font_table) $(azlu_font_png) 50
+
+$(azlu_font_bin): $(azlu_font_png) $(azlu_font_table)
+	mkdir -p $(azlu_font_dir)
+	$(2BPP) -o $@ $<
+
+azlu_text = revisions/U8/src/text/dialog.asm
+$(azlu_text): translate/$(azlu_lang)/dialog.yaml translate/$(base_lang)/dialog.yaml $(azlu_font_bin)
+	$(PYTHON) tools/unicode/import_dialog.py translate/$(base_lang)/dialog.yaml $< $@
+	$(PYTHON) tools/unicode/split_sections.py $@ $@
+
+games += azlu.gbc
+src/main.azlu.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu_ASFLAGS = -DLANG=JP -DVERSION=0 -I revisions/U8/src/
+azlu_FXFLAGS = --rom-version 0 --title "ZELDA"
+
+games += azlu-r1.gbc
+src/main.azlu-r1.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu-r1_ASFLAGS = -DLANG=JP -DVERSION=1 -I revisions/U8/src/
+azlu-r1_FXFLAGS = --rom-version 1 --title "ZELDA"
+
+games += azlu-r2.gbc
+src/main.azlu-r2.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -I revisions/U8/src/
+azlu-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLU"
 
 #
 # Japanese
