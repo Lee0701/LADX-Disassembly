@@ -1,65 +1,3 @@
-;
-; Dialog display
-;
-
-ExecuteDialog::
-    ; If DialogState == 0, don't do anything.
-    ld   a, [wDialogState]                        ; $2321: $FA $9F $C1
-    and  a                                        ; $2324: $A7
-    ret  z                                        ; $2325: $C8
-
-    ; Configure the dialog background color
-    ld   e, a                                     ; $2326: $5F
-    ld   a, [wGameplayType]                       ; $2327: $FA $95 $DB
-    cp   GAMEPLAY_CREDITS                         ; $232A: $FE $01
-    ; By default use a dark background
-    ld   a, DIALOG_BG_TILE_DARK                   ; $232C: $3E $7E
-    jr   nz, .writeBackgroundTile                 ; $232E: $20 $02
-.lightBackground
-    ; but during credits use a light background
-    ld   a, DIALOG_BG_TILE_LIGHT                  ; $2330: $3E $7F
-.writeBackgroundTile
-    ldh  [hDialogBackgroundTile], a               ; $2332: $E0 $E8
-
-    ; If the character index is > 20 (i.e. past the first two lines),
-    ; mask wDialogNextCharPosition around $10
-    ld   a, [wDialogCharacterIndexHi]             ; $2334: $FA $64 $C1
-    and  a                                        ; $2337: $A7
-    ld   a, [wDialogCharacterIndex]               ; $2338: $FA $70 $C1
-    jr   nz, .wrapPosition                        ; $233B: $20 $04
-    cp   $20                                      ; $233D: $FE $20
-    jr   c, .writePosition                        ; $233F: $38 $04
-.wrapPosition
-    and  $0F                                      ; $2341: $E6 $0F
-    or   $10                                      ; $2343: $F6 $10
-.writePosition
-    ld   [wDialogNextCharPosition], a             ; $2345: $EA $71 $C1
-
-    ; Discard wDialogState upper bit (dialog displayed on bottom)
-    ld   a, e                                     ; $2348: $7B
-    and  ~DIALOG_BOX_BOTTOM_FLAG                  ; $2349: $E6 $7F
-
-    ; Dispatch according to the dialog state
-    dec  a                                        ; $234B: $3D
-    JP_TABLE                                      ; $234C: $C7
-._00 dw DialogOpenAnimationStartHandler           ; $234D
-._01 dw DialogOpenAnimationHandler                ; $234F
-._02 dw DialogOpenAnimationHandler                ; $2351
-._03 dw DialogOpenAnimationHandler                ; $2353
-._04 dw DialogOpenAnimationEndHandler             ; $2355
-._05 dw DialogLetterAnimationStartHandler         ; $2357
-._06 dw DialogLetterAnimationEndHandler           ; $2359
-._07 dw DialogDrawNextCharacterHandler            ; $235B
-._08 dw DialogBreakHandler                        ; $235D
-._09 dw DialogScrollingStartHandler               ; $235F
-._0A dw DialogScrollingEndHandler                 ; $2361
-._0B dw DialogFinishedHandler                     ; $2363
-._0C dw DialogChoiceHandler                       ; $2365
-._0D dw DialogClosingBeginHandler                 ; $2367
-._0E dw DialogClosingEndHandler                   ; $2369
-
-DialogOpenAnimationStartHandler::
-    jpsb DialogOpenAnimationStart                 ; $236B: $3E $14 $EA $00 $21 $C3 $49 $54
 
 ; Open a dialog in the $100-$1FF range
 ; Input:
@@ -98,6 +36,8 @@ OpenDialogInTable0::
     xor  a                                        ; $238E: $AF
     ld   [wDialogOpenCloseAnimationFrame], a      ; $238F: $EA $6F $C1
     ld   [wDialogCharacterIndex], a               ; $2392: $EA $70 $C1
+    ld [wDialogNextCharPosition], a
+    ld [wDialogCharacterOutIndex], a
     ld   [wDialogCharacterIndexHi], a             ; $2395: $EA $64 $C1
     ld   [wNameIndex], a                          ; $2398: $EA $08 $C1
     ld   [wDialogIndexHi], a                      ; $239B: $EA $12 $C1
@@ -254,174 +194,25 @@ label_244A::
 label_2463::
     inc  l                                        ; $2463: $2C
 
-label_2464::
-    inc  e                                        ; $2464: $1C
-    ld   a, e                                     ; $2465: $7B
-    cp   $12                                      ; $2466: $FE $12
-    jr   nz, label_2444                           ; $2468: $20 $DA
-    ld   e, $00                                   ; $246A: $1E $00
-    ldh  a, [hMultiPurpose0]                      ; $246C: $F0 $D7
-    add  a, $20                                   ; $246E: $C6 $20
-    ldh  [hMultiPurpose0], a                      ; $2470: $E0 $D7
-    jr   nc, label_2475                           ; $2472: $30 $01
-    inc  h                                        ; $2474: $24
+IncrementAndReadNextChar::
+    call IncrementDialogNextCharIndex
+    call ReadDialogNextChar
+    ret
 
-label_2475::
-    ld   l, a                                     ; $2475: $6F
-    inc  d                                        ; $2476: $14
-    ld   a, d                                     ; $2477: $7A
-    cp   $02                                      ; $2478: $FE $02
-    jr   nz, label_2444                           ; $247A: $20 $C8
-    ret                                           ; $247C: $C9
+IncrementDialogNextCharIndex::
+    ld   a, [wDialogCharacterIndex]               ; $2663: $FA $70 $C1
+    ; increment character index
+    ; (add is used because inc doesn't set the carry flag)
+    add  a, $01                                   ; $2666: $C6 $01
+    ld   [wDialogCharacterIndex], a               ; $2668: $EA $70 $C1
+    ld   a, [wDialogCharacterIndexHi]             ; $266B: $FA $64 $C1
+    adc  a, $00                                   ; $266E: $CE $00
+    ld   [wDialogCharacterIndexHi], a             ; $2670: $EA $64 $C1
+    ret
 
-DialogOpenAnimationEndHandler::
-    jpsb DialogOpenAnimationEnd                   ; $247D: $3E $1C $EA $00 $21 $C3 $2C $4A
-
-IncrementDialogState::
-IncrementDialogStateAndReturn::
-    ld   hl, wDialogState                         ; $2485: $21 $9F $C1
-    inc  [hl]                                     ; $2488: $34
-    ret                                           ; $2489: $C9
-
-DialogFinishedHandler::
-    ; If wC1AB == 0...
-    ld   a, [wC1AB]                               ; $248A: $FA $AB $C1
-    and  a                                        ; $248D: $A7
-    jr   nz, UpdateDialogState_return             ; $248E: $20 $1E
-    ; ... and A or B is pressed...
-    ldh  a, [hJoypadState]                        ; $2490: $F0 $CC
-    and  J_A | J_B                                ; $2492: $E6 $30
-    jr   z, UpdateDialogState_return              ; $2494: $28 $18
-    ; ... update dialog state
-
-UpdateDialogState::
-    ; Clear wDialogOpenCloseAnimationFrame
-    xor  a                                        ; $2496: $AF
-    ld   [wDialogOpenCloseAnimationFrame], a      ; $2497: $EA $6F $C1
-
-.if
-    ; If GameplayType == PHOTO_ALBUM
-    ld   a, [wGameplayType]                       ; $249A: $FA $95 $DB
-    cp   GAMEPLAY_PHOTO_ALBUM                     ; $249D: $FE $0D
-    jr   nz, .else                                ; $249F: $20 $03
-.then
-    ; A = 0
-    xor  a                                        ; $24A1: $AF
-    jr   .fi                                      ; $24A2: $18 $07
-.else
-    ; A = (wDialogState & $F0) | $E
-    ld   a, [wDialogState]                        ; $24A4: $FA $9F $C1
-    and  $F0                                      ; $24A7: $E6 $F0
-    or   $0E                                      ; $24A9: $F6 $0E
-.fi
-    ; Set dialog state
-    ld   [wDialogState], a                        ; $24AB: $EA $9F $C1
-
-UpdateDialogState_return:
-    ret                                           ; $24AE: $C9
-
-DialogClosingBeginHandler::
-    jpsb AnimateDialogClosing                     ; $24AF: $3E $1C $EA $00 $21 $C3 $A8 $4A
-
-DialogLetterAnimationStartHandler::
-    ld   a, BANK(ClearLetterPixels)               ; $24B7: $3E $1C
-    ld   [rSelectROMBank], a                      ; $24B9: $EA $00 $21
-    ld   a, [wDialogScrollDelay]                  ; $24BC: $FA $72 $C1
-    and  a                                        ; $24BF: $A7
-    jr   z, .delayOver                            ; $24C0: $28 $05
-    dec  a                                        ; $24C2: $3D
-    ld   [wDialogScrollDelay], a                  ; $24C3: $EA $72 $C1
-    ret                                           ; $24C6: $C9
-
-.delayOver
-    call ClearLetterPixels                        ; $24C7: $CD $F1 $49
-    jp   IncrementDialogStateAndReturn            ; $24CA: $C3 $85 $24
-
-DialogLetterAnimationEndHandler::
-    ld   a, BANK(DialogPointerTable)              ; $24CD: $3E $1C
-    ld   [rSelectROMBank], a                      ; $24CF: $EA $00 $21
-    ld   a, [wDialogState]                        ; $24D2: $FA $9F $C1
-    ld   c, a                                     ; $24D5: $4F
-    ld   a, [wDialogNextCharPosition]             ; $24D6: $FA $71 $C1
-    bit  DIALOG_BOX_BOTTOM_BIT, c                 ; $24D9: $CB $79
-    jr   z, .jp_24DF                              ; $24DB: $28 $02
-    add  a, $20                                   ; $24DD: $C6 $20
-
-.jp_24DF
-    ; bc = [wDialogNextCharPosition]
-    ld   c, a                                     ; $24DF: $4F
-    ld   b, $00                                   ; $24E0: $06 $00
-    ; de = $01
-    ld   e, $01                                   ; $24E2: $1E $01
-    ld   d, $00                                   ; $24E4: $16 $00
-    ld   a, [wBGOriginHigh]                       ; $24E6: $FA $2E $C1
-    ld   hl, Data_01C_45C1                        ; $24E9: $21 $C1 $45
-    add  hl, bc                                   ; $24EC: $09
-    add  a, [hl]                                  ; $24ED: $86
-    ld   hl, wDrawCommandsSize                    ; $24EE: $21 $00 $D6
-    add  hl, de                                   ; $24F1: $19
-    ldi  [hl], a                                  ; $24F2: $22
-    ld   [wC175], a                               ; $24F3: $EA $75 $C1
-    push hl                                       ; $24F6: $E5
-    ld   hl, Data_01C_4601                        ; $24F7: $21 $01 $46
-    add  hl, bc                                   ; $24FA: $09
-    ld   a, [hl]                                  ; $24FB: $7E
-    and  $E0                                      ; $24FC: $E6 $E0
-    add  a, $20                                   ; $24FE: $C6 $20
-    ld   e, a                                     ; $2500: $5F
-    ld   a, [wBGOriginLow]                        ; $2501: $FA $2F $C1
-    add  a, [hl]                                  ; $2504: $86
-    ld   d, a                                     ; $2505: $57
-    cp   e                                        ; $2506: $BB
-    jr   c, .jp_250D                              ; $2507: $38 $04
-    ld   a, d                                     ; $2509: $7A
-    sub  a, $20                                   ; $250A: $D6 $20
-    ld   d, a                                     ; $250C: $57
-
-.jp_250D
-    ld   a, d                                     ; $250D: $7A
-    ld   [wC176], a                               ; $250E: $EA $76 $C1
-    pop  hl                                       ; $2511: $E1
-    ldi  [hl], a                                  ; $2512: $22
-    xor  a                                        ; $2513: $AF
-    ldi  [hl], a                                  ; $2514: $22
-    push hl                                       ; $2515: $E5
-    ld   a, [wDialogCharacterIndex]               ; $2516: $FA $70 $C1
-    and  $1F                                      ; $2519: $E6 $1F
-    ld   c, a                                     ; $251B: $4F
-    ld   hl, Data_01C_45A1                        ; $251C: $21 $A1 $45
-    add  hl, bc                                   ; $251F: $09
-    ld   a, [hl]                                  ; $2520: $7E
-    pop  hl                                       ; $2521: $E1
-    ldi  [hl], a                                  ; $2522: $22
-    call IncrementDialogState                     ; $2523: $CD $85 $24
-    jp   DialogDrawNextCharacterHandler           ; $2526: $C3 $29 $25
-
-DialogDrawNextCharacterHandler::
-    ld   a, BANK(DialogPointerTable)              ; $2529: $3E $1C
-    ld   [rSelectROMBank], a                      ; $252B: $EA $00 $21
-    ld   a, [wDialogCharacterIndex]               ; $252E: $FA $70 $C1
-    and  $1F                                      ; $2531: $E6 $1F
-    ld   c, a                                     ; $2533: $4F
-    ld   b, $00                                   ; $2534: $06 $00
-    ld   e, $05                                   ; $2536: $1E $05
-    ld   d, $00                                   ; $2538: $16 $00
-    ld   hl, DialogCharacterYTable                ; $253A: $21 $81 $45
-    add  hl, bc                                   ; $253D: $09
-    ld   a, [hl]                                  ; $253E: $7E
-
-    ld   hl, wDrawCommandsSize                    ; $253F: $21 $00 $D6
-    add  hl, de                                   ; $2542: $19
-    ldi  [hl], a ; high byte of tile destination address ; $2543: $22
-    push hl                                       ; $2544: $E5
-    ld   hl, DialogCharacterXTable                ; $2545: $21 $61 $45
-    add  hl, bc                                   ; $2548: $09
-    ld   a, [hl]                                  ; $2549: $7E
-    pop  hl                                       ; $254A: $E1
-    ldi  [hl], a ; low byte of tile destination address ; $254B: $22
-    ld   a, $0F                                   ; $254C: $3E $0F
-    ldi  [hl], a ; number of bytes                ; $254E: $22
-    push hl                                       ; $254F: $E5
+ReadDialogNextChar::
+    push hl
+    push de
     ld   a, [wDialogIndexHi]                      ; $2550: $FA $12 $C1
     ld   d, a                                     ; $2553: $57
     ld   a, [wDialogIndex]                        ; $2554: $FA $73 $C1
@@ -433,21 +224,7 @@ DialogDrawNextCharacterHandler::
     ld   a, [hli]                                 ; $2560: $2A
     ld   e, a                                     ; $2561: $5F
     ld   d, [hl]                                  ; $2562: $56
-IF __USE_FIXED_DIALOG_BANKS__
-    ld   l, e
-    ld   h, d
-    ld   e, BANK(Dialog000)
-    ld   a, [wDialogIndexHi]
-    and  a
-    jr   z, .foundBank
-    ld   e,  BANK(Dialog100)
-    cp   $01
-    jr   z, .foundBank
-    ld   e,  BANK(Dialog200)
-.foundBank
-    ld   a, e
-    ld   [rSelectROMBank], a
-ELSE
+
     push de                                       ; $2563: $D5
     ld   a, [wDialogIndex]                        ; $2564: $FA $73 $C1
     ld   e, a                                     ; $2567: $5F
@@ -457,10 +234,10 @@ ELSE
     add  hl, de                                   ; $256F: $19
     ld   a, [hl] ; bank                           ; $2570: $7E
     ; Mask out DIALOG_UNSKIPPABLE flag
-    and  $3F                                      ; $2571: $E6 $3F
+    and  $7F                                      ; $2571: $E6 $3F
     ld   [rSelectROMBank], a                      ; $2573: $EA $00 $21
     pop  hl                                       ; $2576: $E1
-ENDC
+
     ld   a, [wDialogCharacterIndex]               ; $2577: $FA $70 $C1
     ld   e, a                                     ; $257A: $5F
     ld   a, [wDialogCharacterIndexHi]             ; $257B: $FA $64 $C1
@@ -472,7 +249,9 @@ ENDC
     ; the dialog, for later use in DialogBreakHandler
     ld   a, [hl]                                  ; $2582: $7E
     ld   [wDialogNextChar], a                     ; $2583: $EA $C3 $C3
-    call ReloadSavedBank                          ; $2586: $CD $1D $08
+    ; call ReloadSavedBank                          ; $2586: $CD $1D $08
+    ld   a, $1c
+    ld   [rSelectROMBank], a
     ld   a, e                                     ; $2589: $7B
     ldh  [hMultiPurpose0], a                      ; $258A: $E0 $D7
     cp   "<ask>" ; $fe                            ; $258C: $FE $FE
