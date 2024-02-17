@@ -338,7 +338,6 @@ include "data/maps/layouts.asm"
 include "data/chests/chests.asm"
 include "code/bank14.asm"
 include "text/dialog_1.asm"
-include "text/dialog_200.asm"
 
 section "bank15",romx[$4000],bank[$15]
 include "code/entities/bank15.asm"
@@ -419,11 +418,12 @@ include "data/codepoint_to_diacritic.asm"
 include "data/dialogs/dialog_banks.asm"
 include "code/dialog_letters.asm"
 include "text/dialog_3.asm"
-include "text/dialog_000.asm"
+include "constants/charmaps/name_to_utf8.asm"
+include "code/bank1c_utf8.asm"
+include "code/bank1c_dialog.asm"
 
 section "bank1D", romx[$4000], bank[$1D]
 include "text/dialog_4.asm"
-include "text/dialog_100.asm"
 
 section "bank1E", romx[$4000], bank[$1E]
 include "code/audio/music_2.asm"
@@ -770,5 +770,27 @@ include "code/photos_bg.asm"
 ; Unused banks; make blank sections so they are filled with $00 instead of $ff to match
 ; the rom
 section "bank3E",romx[$4000],bank[$3E]
+
 section "bank3F",romx[$4000],bank[$3F]
 include "text/dialog_5.asm"
+
+; Sections are defined in the asm file
+; section "bank40",romx[$4000],bank[$40]
+include "text/dialog.asm"
+
+; Sections are defined in the asm file
+; section "bank50",romx[$4000],bank[$50]
+include "gfx/fonts/font_unicode_table.asm"
+
+section "bank80",romx[$4000],bank[$80]
+gfx_font_unicode:
+incbin "gfx/fonts/font_unicode.2bpp",$0,$4000
+DEF BANK_LEN = $4000
+DEF BANK_NUM = $81
+DEF OFFSET = $4000
+REPT 7
+    section "bank{BANK_NUM}",romx[$4000],bank[{BANK_NUM}]
+    incbin "gfx/fonts/font_unicode.2bpp",OFFSET,BANK_LEN
+    REDEF BANK_NUM = BANK_NUM + $1
+    REDEF OFFSET = OFFSET + BANK_LEN
+ENDR

@@ -455,9 +455,12 @@ func_036_4BE8_trampoline::
 
 func_A9B::
     push af                                       ; $0A9B: $F5
-    ld   a, BANK(FontTiles)                       ; $0A9C: $3E $0F
-    call SwitchBank                               ; $0A9E: $CD $0C $08
-    call ExecuteDialog                            ; $0AA1: $CD $21 $23
+    ; TODO
+    ; ld   a, BANK(FontTiles)                       ; $0A9C: $3E $0F
+    ; call SwitchBank                               ; $0A9E: $CD $0C $08
+    callsb ExecuteDialog                            ; $0AA1: $CD $21 $23
+    ; TODO: Check if this works
+    call ReloadSavedBank
     jp   RestoreStackedBankAndReturn              ; $0AA4: $C3 $73 $09
 
 func_036_705A_trampoline::
@@ -694,10 +697,13 @@ Farcall::
     ; Switch to bank wFarcallBank
     ld   a, [wFarcallBank]                        ; $0BD7: $FA $01 $DE
     ld   [rSelectROMBank], a                      ; $0BDA: $EA $00 $21
+    ; Push return bank in advance for consecutive calls
+    ld   a, [wFarcallReturnBank]                  ; $0BE0: $FA $04 $DE
+    push af
     ; Call the target function
     call Farcall_trampoline                       ; $0BDD: $CD $E7 $0B
     ; Switch back to bank wFarcallReturnBank
-    ld   a, [wFarcallReturnBank]                  ; $0BE0: $FA $04 $DE
+    pop af
     ld   [rSelectROMBank], a                      ; $0BE3: $EA $00 $21
     ret                                           ; $0BE6: $C9
 
@@ -780,12 +786,61 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
+FileMenuNextChar::
+    inc de
+    ld a, [de]
+    ret
+
+ReadTileValueFromUTF8Table::
+    push af
+    ld a, BANK(GetUTF8Char)
+    ld [rSelectROMBank], a
+    ld l, $01
+    pop af
+    call GetUTF8Char
+    call GetFontAddr
+    push af
+    ld a, e
+    sub a, LOW(wSaveSlotNames)
+
+    ld b, h
+    ld c, l
+    ld h, $94
+    ld l, a
+    sla l
+    sla l
+    sla l
+    sla l
+
+    pop af
+    push de
+
+    push af
+.wait
+    ld a, [rLY]
+    cp SCRN_Y + 1
+    jr nz, .wait
+    pop af
+    call CopyTile
+    ; call AppendDrawCommand
+    pop de
+
+    ld a, e
+    sub a, LOW(wSaveSlotNames)
+    add a, $40
+
+    ld hl, rSelectROMBank
+    ld [hl], $01
+    ret
+
 ReadTileValueFromAsciiTable::
     ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
     jr   ReadValueInDialogsBank                   ; $0C28: $18 $03
 
 ReadTileValueFromDiacriticsTable::
-    ld   hl, CodepointToDiacritic                 ; $0C2A: $21 $41 $47
+    ; ld   hl, CodepointToDiacritic                 ; $0C2A: $21 $41 $47
+    ld a, $00
+    ret
 
 ReadValueInDialogsBank::
     ld   a, BANK(CodepointToTileMap) ; or BANK(DialogBankTable) ; $0C2D: $3E $1C
@@ -1569,9 +1624,12 @@ label_1012::
 
 returnFromGameplayHandler::
     ; Present dialog if needed
-    ld   a, BANK(FontTiles)                       ; $101A: $3E $0F
-    call SwitchBank                               ; $101C: $CD $0C $08
-    call ExecuteDialog                            ; $101F: $CD $21 $23
+    ; TODO
+    ; ld   a, BANK(FontTiles)                       ; $101A: $3E $0F
+    ; call SwitchBank                               ; $101C: $CD $0C $08
+    callsb ExecuteDialog                            ; $101F: $CD $21 $23
+    ; TODO: Check if this works (Doubt it doesn't)
+    ; call ReloadSavedBank
 
     ; If on DMG, return now to the main game loop
     ldh  a, [hIsGBC]                              ; $1022: $F0 $FE
