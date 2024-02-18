@@ -23,9 +23,10 @@ def load_charset(charset_file):
     with open(charset_file, 'r', encoding='utf-8') as f:
         chars = f.read()
 
+    chars = chars.strip()
     chars = re.sub(r'[^\S\r\n]', '', chars)
     chars = re.sub(r'\\u([0-9a-fA-F]{1,6})', lambda x: chr(int(x.group(1), 16)), chars)
-    chars = chars.strip().split('\n')
+    chars = chars.split('\n')
     return chars
 
 def gen_bitmap(font_def, filepath):
