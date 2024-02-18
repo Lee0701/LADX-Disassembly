@@ -3,12 +3,14 @@ import sys
 import yaml
 
 def convert_char(c):
-    if c == '@':
+    if c == '@' or c == '＠':
         return '\0'
-    elif c =='%':
+    elif c =='%' or c == '％':
         return '\x01'
-    elif c == '#':
+    elif c == '#' or c == '＃':
         return '\x02'
+    elif c == ' ':
+        return '　'
     else:
         return c
 
@@ -24,6 +26,8 @@ def main(base_file, input_file, output_file):
         result.append(key + '::')
         for line in value.split('\n'):
             chars = ''.join([convert_char(c) for c in line])
+            if '\0' not in chars:
+                chars = chars.ljust(16, '　')
             chars = list(chars.encode('utf-8'))
             if len(chars) == 0:
                 continue
