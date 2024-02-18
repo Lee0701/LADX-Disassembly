@@ -106,17 +106,17 @@ $(azlu_text): translate/$(azlu_lang)/dialog.yaml translate/$(base_lang)/dialog.y
 
 games += azlu.gbc
 src/main.azlu.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
-azlu_ASFLAGS = -DLANG=JP -DVERSION=0 -I revisions/U8/src/
+azlu_ASFLAGS = -DLANG=UTF8 -DVERSION=0 -I revisions/U8/src/
 azlu_FXFLAGS = --rom-version 0 --title "ZELDA"
 
 games += azlu-r1.gbc
 src/main.azlu-r1.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
-azlu-r1_ASFLAGS = -DLANG=JP -DVERSION=1 -I revisions/U8/src/
+azlu-r1_ASFLAGS = -DLANG=UTF8 -DVERSION=1 -I revisions/U8/src/
 azlu-r1_FXFLAGS = --rom-version 1 --title "ZELDA"
 
 games += azlu-r2.gbc
 src/main.azlu-r2.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
-azlu-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -I revisions/U8/src/
+azlu-r2_ASFLAGS = -DLANG=UTF8 -DVERSION=2 -I revisions/U8/src/
 azlu-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLU"
 
 #
