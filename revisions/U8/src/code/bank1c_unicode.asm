@@ -27,60 +27,61 @@ UTF8_to_UTF32::
 
 .quadByte
     and a, $07
-    rlca
-    rlca
+    rla
+    rla
     ld h, a
     read_next_byte_with_preserving_de
     push af
     and a, $30
-    rrca
-    rrca
-    rrca
-    rrca
+    rra
+    rra
+    rra
+    rra
     or h
     ld h, a
     pop af
     and a, $0f
-    rlca
-    rlca
-    rlca
-    rlca
+    rla
+    rla
+    rla
+    rla
     ld b, a
     read_next_byte_with_preserving_de
     push af
     and a, $3c
-    rrca
-    rrca
+    rra
+    rra
     or b
     ld b, a
     jr .lastByte
 .tripleByte
     and a, $0f
-    rlca
-    rlca
-    rlca
-    rlca
+    rla
+    rla
+    rla
+    rla
     ld b, a
     read_next_byte_with_preserving_de
     push af
     and a, $3c
-    rrca
-    rrca
+    rra
+    rra
     or b
     ld b, a
     jr .lastByte
 .doubleByte
     push af
     and a, $1c
-    rrca
-    rrca
+    rra
+    rra
     ld b, a
 
 .lastByte
     pop af
     and a, $03
-    rrca
-    rrca
+    rra
+    rra
+    rra
     ld c, a
     read_next_byte_with_preserving_de
     and a, $3f
@@ -124,23 +125,23 @@ UTF16BE_to_UTF32::
 .surrogates
     pop af
     and a, $03
-    rlca
-    rlca
+    rla
+    rla
     ld c, a
 
     read_next_byte_with_preserving_de
     push af
     and $c0
-    rlca
-    rlca
+    rla
+    rla
     or c
     inc a
     ld [wConvertedUnicode + 1], a
 
     pop af
     and $3f
-    rlca
-    rlca
+    rla
+    rla
     ld c, a
 
     read_next_byte_with_preserving_de
@@ -216,17 +217,17 @@ GetFontAddr::
     ; bank number
     ld a, h
     and a, $1f
-    rlca
-    rlca
-    rlca
+    rla
+    rla
+    rla
     ld h, a
     ld a, b
     and a, $e0
-    rrca
-    rrca
-    rrca
-    rrca
-    rrca
+    rra
+    rra
+    rra
+    rra
+    rra
     or a, h
 
     add a, BANK(gfx_font_unicode_table)
@@ -253,8 +254,8 @@ GetFontAddr::
 ; Get Font Address
     ld a, b
     and a, $fc
-    rrca
-    rrca
+    rra
+    rra
     add a, BANK(gfx_font_unicode)
     push af
     ld a, b
