@@ -36,7 +36,9 @@ OpenDialogInTable0::
     xor  a                                        ; $238E: $AF
     ld   [wDialogOpenCloseAnimationFrame], a      ; $238F: $EA $6F $C1
     ld   [wDialogCharacterIndex], a               ; $2392: $EA $70 $C1
-        ld   [wDialogCharacterIndexHi], a             ; $2395: $EA $64 $C1
+    ld   [wDialogCharacterIndexHi], a             ; $2395: $EA $64 $C1
+    ld [wDialogNextCharPosition], a
+    ld [wDialogCharacterOutIndex], a
     ld   [wNameIndex], a                          ; $2398: $EA $08 $C1
     ld   [wDialogIndexHi], a                      ; $239B: $EA $12 $C1
 
