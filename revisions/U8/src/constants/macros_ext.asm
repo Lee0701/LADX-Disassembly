@@ -7,9 +7,7 @@ macro read_byte_from_bank_a_and_return
     pop bc
 endm
 
-macro read_next_byte_with_preserving_de
-    pop de
+macro read_next_byte
     inc de
     call ReadNextByte
-    push de
 endm
