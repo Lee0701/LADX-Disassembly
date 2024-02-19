@@ -11,7 +11,6 @@ UTF8_to_UTF32::
     ld l, $02
 .begin
     ; We need to keep de value for '.tile' mode
-    push de
     ld h, $00
 
     bit 7, a
@@ -31,7 +30,7 @@ UTF8_to_UTF32::
     rla
     rla
     ld h, a
-    read_next_byte_with_preserving_de
+    read_next_byte
     push af
     and a, $30
     rra
@@ -47,7 +46,7 @@ UTF8_to_UTF32::
     rla
     rla
     ld b, a
-    read_next_byte_with_preserving_de
+    read_next_byte
     push af
     and a, $3c
     rra
@@ -62,7 +61,7 @@ UTF8_to_UTF32::
     rla
     rla
     ld b, a
-    read_next_byte_with_preserving_de
+    read_next_byte
     push af
     and a, $3c
     rra
@@ -84,7 +83,7 @@ UTF8_to_UTF32::
     rra
     rra
     ld c, a
-    read_next_byte_with_preserving_de
+    read_next_byte
     and a, $3f
     or c
     ld c, a
@@ -104,7 +103,6 @@ UTF8_to_UTF32::
     ld a, c
     ld [wConvertedUnicode + 3], a
     pop af
-    pop de
     ret
 
 UTF16BE_to_UTF32::
@@ -118,7 +116,7 @@ UTF16BE_to_UTF32::
     ld [wConvertedUnicode + 1], a
     pop af
     ld [wConvertedUnicode + 2], a
-    read_next_byte_with_preserving_de
+    read_next_byte
     ld [wConvertedUnicode + 3], a
 
     jr .endUTF16
@@ -130,7 +128,7 @@ UTF16BE_to_UTF32::
     rla
     ld c, a
 
-    read_next_byte_with_preserving_de
+    read_next_byte
     push af
     and $c0
     rla
@@ -145,12 +143,12 @@ UTF16BE_to_UTF32::
     rla
     ld c, a
 
-    read_next_byte_with_preserving_de
+    read_next_byte
     and $03
     or c
     ld [wConvertedUnicode + 2], a
 
-    read_next_byte_with_preserving_de
+    read_next_byte
     ld [wConvertedUnicode + 3], a
 
 .endUTF16
