@@ -28,7 +28,7 @@ def main(base_file, input_file, output_file):
             chars = ''.join([convert_char(c) for c in line])
             if '\0' not in chars:
                 chars = chars.ljust(16, '　')
-            chars = list(chars.encode('utf-8'))
+            chars = list(chars.encode('utf-16be'))
             if len(chars) == 0:
                 continue
             chars = ['$%02x' % c for c in chars]

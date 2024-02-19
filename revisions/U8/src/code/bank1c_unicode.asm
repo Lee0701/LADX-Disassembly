@@ -1,5 +1,5 @@
 
-; return wConvertedUnicode: utf-32 codepoint
+; @return wConvertedUnicode: utf-32 codepoint
 UTF8_to_UTF32::
 .dialog
     ld l, $00
@@ -10,7 +10,6 @@ UTF8_to_UTF32::
 .tile
     ld l, $02
 .begin
-    ; We need to keep de value for '.tile' mode
     ld h, $00
 
     bit 7, a
@@ -106,7 +105,15 @@ UTF8_to_UTF32::
     ret
 
 UTF16BE_to_UTF32::
-    push de
+.dialog
+    ld l, $00
+    jr .begin
+.dialog_name
+    ld l, $01
+    jr .begin
+.tile
+    ld l, $02
+.begin
     push af
     and a, $fc
     xor a, $d8
@@ -154,7 +161,6 @@ UTF16BE_to_UTF32::
 .end
     xor a
     ld [wConvertedUnicode + 0], a
-    pop de
     ret
 
 ReadNextByte::
@@ -163,7 +169,7 @@ ReadNextByte::
     and a
     jr z, .dialog
     cp a, $01
-    jr z, .name
+    jr z, .dialog_name
     cp a, $02
     jr z, .tile
     ; safety
@@ -175,7 +181,7 @@ ReadNextByte::
     call IncrementAndReadNextChar
     ret
 
-.name
+.dialog_name
     pop af
     push hl
     push de

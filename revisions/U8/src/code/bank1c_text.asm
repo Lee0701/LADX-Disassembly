@@ -492,16 +492,14 @@ ENDR
 
 .handleNameChar
     ldh  [hMultiPurpose1], a
-    ld l, $01
-    call UTF8_to_UTF32.dialog_name
+    call UTF16BE_to_UTF32.dialog_name
     call GetFontAddr
     jr .endChar
 
 .notName
     ldh  [hMultiPurpose1], a                      ; $2608: $E0 $D8
     ; ld   e, a                                     ; $260A: $5F
-    ld l, $00
-    call UTF8_to_UTF32.dialog
+    call UTF16BE_to_UTF32.dialog
     call GetFontAddr
 
 .endChar
