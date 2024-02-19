@@ -493,7 +493,7 @@ ENDR
 .handleNameChar
     ldh  [hMultiPurpose1], a
     ld l, $01
-    call UTF16BE_to_UTF32
+    call UTF8_to_UTF32
     call GetFontAddr
     jr .endChar
 

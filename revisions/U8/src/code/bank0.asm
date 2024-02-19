@@ -802,11 +802,6 @@ Call_Bank1C_func_001_4CDA::
     ld [rSelectROMBank], a
     ret
 
-FileMenuNextChar::
-    inc de
-    ld a, [de]
-    ret
-
 ReadTileValueFromUTF8Table::
     push af
     ld a, BANK(UTF8_to_UTF32)
