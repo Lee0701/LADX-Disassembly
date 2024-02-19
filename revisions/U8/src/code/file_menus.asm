@@ -858,7 +858,7 @@ func_001_4C8A:: ; "Enter Name" screen
     bit  J_BIT_B, a ; Was B pushed?               ; $4C90: $CB $6F
     jr   nz, .jr_4CA7 ; If yes, backspace         ; $4C92: $20 $13
     call PlayValidationJingle ; Otherwise, A was pushed ; $4C94: $CD $BE $49
-    call func_001_4CDA ; so add the current letter ; $4C97: $CD $DA $4C
+    callsb Bank1C_func_001_4CDA ; so add the current letter ; $4C97: $CD $DA $4C
     ld   a, [wSaveSlotNameCharIndex]              ; $4C9A: $FA $AA $DB
     add  a, $01                                   ; $4C9D: $C6 $01
     cp   NAME_LENGTH ; Prevent cursor from going > 5th place ; $4C9F: $FE $05
@@ -902,28 +902,6 @@ jr_001_4CB7::
 
 .return
     ret                                           ; $4CD9: $C9
-
-func_001_4CDA::
-    ld   a, [wNameEntryCurrentChar]               ; $4CDA: $FA $A9 $DB
-    ld   c, a                                     ; $4CDD: $4F
-    ld   b, $00                                   ; $4CDE: $06 $00
-    ld   hl, NameEntryCharacterTable              ; $4CE0: $21 $B5 $4B
-    add  hl, bc                                   ; $4CE3: $09
-    ld   a, [hl]                                  ; $4CE4: $7E
-    ld   e, a                                     ; $4CE5: $5F
-    ld   a, [wSaveSlot]                           ; $4CE6: $FA $A6 $DB
-    ld   c, a                                     ; $4CE9: $4F
-    sla  a                                        ; $4CEA: $CB $27
-    sla  a                                        ; $4CEC: $CB $27
-    add  a, c                                     ; $4CEE: $81
-    ld   c, a                                     ; $4CEF: $4F
-    ld   hl, wSaveSlot1Name                       ; $4CF0: $21 $80 $DB
-    add  hl, bc                                   ; $4CF3: $09
-    ld   a, [wSaveSlotNameCharIndex]              ; $4CF4: $FA $AA $DB
-    ld   c, a                                     ; $4CF7: $4F
-    add  hl, bc                                   ; $4CF8: $09
-    ld   [hl], e                                  ; $4CF9: $73
-    ret                                           ; $4CFA: $C9
 
 
 ; -----------------------------------------------------------------------------

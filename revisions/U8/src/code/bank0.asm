@@ -786,18 +786,10 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
-    Call_Bank1C_DrawSaveSlotName::
+Call_Bank1C_DrawSaveSlotName::
     ld a, $1c
     ld [rSelectROMBank], a
     call Bank1C_DrawSaveSlotName
-    ld a, $01
-    ld [rSelectROMBank], a
-    ret
-
-Call_Bank1C_func_001_4CDA::
-    ld a, $1c
-    ld [rSelectROMBank], a
-    call Bank1C_func_001_4CDA
     ld a, $01
     ld [rSelectROMBank], a
     ret
