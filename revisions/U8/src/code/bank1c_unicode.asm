@@ -1,11 +1,4 @@
 
-macro read_next_byte_with_preserving_de
-    pop de
-    inc de
-    call ReadNextByte
-    push de
-endm
-
 ; param l: mode ($00 = dialog, $01 = name (in dialog), $02 = tile)
 ; return wConvertedUnicode: utf-32 codepoint
 UTF8_to_UTF32::
