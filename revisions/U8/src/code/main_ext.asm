@@ -1,8 +1,8 @@
 
-include "code/macros.inc"
+include "constants/macros_ext.asm"
 
 section "bank1C_ext",romx,bank[$1C]
-include "constants/charmaps/text_entry_table.asm"
+include "data/text_entry_table.asm"
 include "code/bank1c_unicode.asm"
 include "code/bank1c_text.asm"
 
