@@ -1,8 +1,16 @@
 
-; param l: mode ($00 = dialog, $01 = name (in dialog), $02 = tile)
 ; return wConvertedUnicode: utf-32 codepoint
 UTF8_to_UTF32::
-    ; We need to keep de value for '.file_menu' mode
+.dialog
+    ld l, $00
+    jr .begin
+.dialog_name
+    ld l, $01
+    jr .begin
+.tile
+    ld l, $02
+.begin
+    ; We need to keep de value for '.tile' mode
     push de
     ld h, $00
 
@@ -159,7 +167,7 @@ ReadNextByte::
     cp a, $01
     jr z, .name
     cp a, $02
-    jr z, .file_menu
+    jr z, .tile
     ; safety
     pop af
     ret
@@ -186,7 +194,7 @@ ReadNextByte::
     pop hl
     ret
 
-.file_menu
+.tile
     pop af
     ld a, [de]
     push hl
