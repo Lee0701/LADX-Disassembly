@@ -13,11 +13,3 @@ macro read_next_byte_with_preserving_de
     call ReadNextByte
     push de
 endm
-
-macro call_Bank1C_func_001_4CDA
-    ld a, $1c
-    ld [rSelectROMBank], a
-    call Bank1C_func_001_4CDA
-    ld a, $01
-    ld [rSelectROMBank], a
-endm
