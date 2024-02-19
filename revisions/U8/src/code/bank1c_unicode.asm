@@ -16,14 +16,14 @@ UTF8_to_UTF32::
     bit 7, a
     jr z, .singleByte
     bit 6, a
-    jp z, .endUTF8
+    jp z, .end
     bit 5, a
     jr z, .doubleByte
     bit 4, a
     jr z, .tripleByte
     bit 3, a
     jr z, .quadByte
-    jr .endUTF8
+    jr .end
 
 .quadByte
     and a, $07
@@ -87,12 +87,12 @@ UTF8_to_UTF32::
     and a, $3f
     or c
     ld c, a
-    jr .endUTF8
+    jr .end
 .singleByte
     and a, $7f
     ld b, $00
     ld c, a
-.endUTF8
+.end
     push af
     xor a
     ld [wConvertedUnicode + 0], a
@@ -119,7 +119,7 @@ UTF16BE_to_UTF32::
     read_next_byte
     ld [wConvertedUnicode + 3], a
 
-    jr .endUTF16
+    jr .end
 
 .surrogates
     pop af
@@ -151,7 +151,7 @@ UTF16BE_to_UTF32::
     read_next_byte
     ld [wConvertedUnicode + 3], a
 
-.endUTF16
+.end
     xor a
     ld [wConvertedUnicode + 0], a
     pop de
