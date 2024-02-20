@@ -809,24 +809,26 @@ ReadTileValueFromUTF8Table::
     ld a, BANK(UTF8_to_UTF32)
     ld [rSelectROMBank], a
     pop af
+
     call UTF8_to_UTF32.tile
     call GetFontAddr
-push af
+
+    push af
     ld a, e
     sub a, LOW(wSaveSlotNames)
 
     ld b, h
     ld c, l
     ld h, $94
+    and $0f
+    rla
+    rla
+    rla
+    rla
     ld l, a
-    sla l
-    sla l
-    sla l
-    sla l
-
     pop af
+
     push de
-    
     push af
 .wait
     ld a, [rLY]
