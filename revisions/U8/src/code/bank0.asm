@@ -798,7 +798,6 @@ ReadTileValueFromUTF8Table::
     push af
     ld a, BANK(UTF8_to_UTF32)
     ld [rSelectROMBank], a
-    ld l, $01
     pop af
     call UTF8_to_UTF32.tile
     call GetFontAddr
