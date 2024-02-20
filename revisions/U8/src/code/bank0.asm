@@ -786,55 +786,6 @@ PlayWrongAnswerJingle::
     ldh  [hJingle], a                             ; $0C22: $E0 $F2
     ret                                           ; $0C24: $C9
 
-Call_Bank1C_DrawSaveSlotName::
-    ld a, $1c
-    ld [rSelectROMBank], a
-    call Bank1C_DrawSaveSlotName
-    ld a, $01
-    ld [rSelectROMBank], a
-    ret
-
-ReadTileValueFromUTF8Table::
-    push af
-    ld a, BANK(UTF8_to_UTF32)
-    ld [rSelectROMBank], a
-    pop af
-    call UTF8_to_UTF32.tile
-    call GetFontAddr
-    push af
-    ld a, e
-    sub a, LOW(wSaveSlotNames)
-
-    ld b, h
-    ld c, l
-    ld h, $94
-    ld l, a
-    sla l
-    sla l
-    sla l
-    sla l
-
-    pop af
-    push de
-
-    push af
-.wait
-    ld a, [rLY]
-    cp SCRN_Y + 1
-    jr nz, .wait
-    pop af
-    call CopyTile
-    ; call AppendDrawCommand
-    pop de
-
-    ld a, e
-    sub a, LOW(wSaveSlotNames)
-    add a, $40
-
-    ld hl, rSelectROMBank
-    ld [hl], $01
-    ret
-
 ReadTileValueFromAsciiTable::
     ld   hl, CodepointToTileMap                   ; $0C25: $21 $41 $46
     jr   ReadValueInDialogsBank                   ; $0C28: $18 $03
@@ -852,6 +803,47 @@ ReadValueInDialogsBank::
     ld   hl, rSelectROMBank                       ; $0C34: $21 $00 $21
     ld   [hl], $01                                ; $0C37: $36 $01
     ret                                           ; $0C39: $C9
+
+ReadTileValueFromUTF8Table::
+    push af
+    ld a, BANK(UTF8_to_UTF32)
+    ld [rSelectROMBank], a
+    pop af
+    call UTF8_to_UTF32.tile
+    call GetFontAddr
+push af
+    ld a, e
+    sub a, LOW(wSaveSlotNames)
+
+    ld b, h
+    ld c, l
+    ld h, $94
+    ld l, a
+    sla l
+    sla l
+    sla l
+    sla l
+
+    pop af
+    push de
+    
+    push af
+.wait
+    ld a, [rLY]
+    cp SCRN_Y + 1
+    jr nz, .wait
+    pop af
+    call CopyTile
+    ; call AppendDrawCommand
+    pop de
+
+    ld a, e
+    sub a, LOW(wSaveSlotNames)
+    add a, $40
+
+    ld hl, rSelectROMBank
+    ld [hl], $01
+    ret
 
 ; Copy 4 tiles from bank $0C, then return to bank 1.
 ; Inputs:

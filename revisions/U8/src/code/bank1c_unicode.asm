@@ -1,5 +1,5 @@
 
-; return wConvertedUnicode: utf-32 codepoint
+; @return wConvertedUnicode: utf-32 codepoint
 UTF8_to_UTF32::
 .dialog
     ld l, $00
@@ -201,7 +201,9 @@ ReadNextByte::
     pop hl
     ret
 
-; param wConvertedUnicode: utf-32 value
+; @param wConvertedUnicode: utf-32 value
+; @return a: bank number the character is in
+; @return hl: address of the character
 GetFontAddr::
     push af
     ld a, [wConvertedUnicode + 1]
