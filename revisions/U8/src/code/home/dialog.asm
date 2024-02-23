@@ -127,10 +127,10 @@ ReadDialogNextChar::
     pop hl
     ret
 
-; Read a byte from bank b, offset hl, and return to bank c.
+; Reads a byte from bank b offset hl, and return to bank c.
 ReadByteFromBankBAndReturnToC::
+    ld a, b
     ld [rSelectROMBank], a
-    ld b, [hl]
 
     ld a, [hl]
     ld b, a

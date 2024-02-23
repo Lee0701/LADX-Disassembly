@@ -885,9 +885,9 @@ DialogOpenAnimationStart::
     ld   [wFarcallReturnBank], a                  ; $54A6: $EA $04 $DE
     jp   Farcall                                  ; $54A9: $C3 $D7 $0B
 
-; param a: bank number to read from
-; param bc: address to read from
-; param hl: address to copy to
+; @param a: bank number to read from
+; @param bc: address to read from
+; @param hl: address to copy to
 CopyTile::
     ld e, $10
 .copyTileLoop

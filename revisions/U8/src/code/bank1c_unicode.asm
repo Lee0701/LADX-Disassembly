@@ -10,7 +10,6 @@ UTF8_to_UTF32::
 .tile
     ld l, $02
 .begin
-    ; We need to keep de value for '.tile' mode
     ld h, $00
 
     bit 7, a
@@ -93,7 +92,6 @@ UTF8_to_UTF32::
     ld b, $00
     ld c, a
 .end
-    push af
     xor a
     ld [wConvertedUnicode + 0], a
     ld a, h
@@ -102,7 +100,6 @@ UTF8_to_UTF32::
     ld [wConvertedUnicode + 2], a
     ld a, c
     ld [wConvertedUnicode + 3], a
-    pop af
     ret
 
 UTF16BE_to_UTF32::
