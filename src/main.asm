@@ -14,6 +14,9 @@ include "code/audio_macros.asm"
 ; ROM header
 include "code/home/header.asm"
 
+; Code extension
+include "code/main_ext.asm"
+
 ; Sources
 section "Main", rom0[$0150]
 include "code/bank0.asm"
