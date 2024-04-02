@@ -813,7 +813,7 @@ ReadTileValueFromUTF8Table::
     push de
     call UTF8_to_UTF32.tile
     call GetFontAddr
-    call AppendDrawCommand
+    ; call AppendDrawCommand
     pop de
 
     ld hl, rSelectROMBank
