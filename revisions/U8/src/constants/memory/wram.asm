@@ -3435,8 +3435,8 @@ wConvertedUnicode::
 wInventorySelection::
   ds 1 ; DBA3
 
-; not used
-wDBA4::
+; not used -> Unicode
+wDialogCharacterOutIndex::
   ds 1 ; DBA4
 
 ; 0 = the overworld
@@ -3850,10 +3850,6 @@ wDE0A:
 ; maybe flag to play different music in dialog before fight.
 wDE0B:
   ds 1 ; DE0B
-
-; UTF-8
-wDialogCharacterOutIndex:
-  ds 1
 
 ; top of WRAM is used as Stack
 wStack::

@@ -810,38 +810,11 @@ ReadTileValueFromUTF8Table::
     ld [rSelectROMBank], a
     pop af
 
+    push de
     call UTF8_to_UTF32.tile
     call GetFontAddr
-
-    push af
-    ld a, e
-    sub a, LOW(wSaveSlotNames)
-
-    ld b, h
-    ld c, l
-    ld h, $94
-    and $0f
-    rla
-    rla
-    rla
-    rla
-    ld l, a
-    pop af
-
-    push de
-    push af
-.wait
-    ld a, [rLY]
-    cp SCRN_Y + 1
-    jr nz, .wait
-    pop af
-    call CopyTile
-    ; call AppendDrawCommand
+    call AppendDrawCommand
     pop de
-
-    ld a, e
-    sub a, LOW(wSaveSlotNames)
-    add a, $40
 
     ld hl, rSelectROMBank
     ld [hl], $01
