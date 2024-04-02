@@ -121,7 +121,7 @@ DrawSaveSlotName::
     ld   a, DIALOG_BG_TILE_DARK                   ; $4871: $3E $7E
     jr   z, .drawCharacterTile                    ; $4873: $28 $0C
     ld   a, [de]                                  ; $4875: $1A
-    dec  a                                        ; $4876: $3D
+    ; dec  a                                        ; $4876: $3D
     push bc                                       ; $4877: $C5
     push hl                                       ; $4878: $E5
     ld   c, a                                     ; $4879: $4F
