@@ -240,12 +240,12 @@ GetFontAddr::
     pop af
     push af
     
-    read_byte_from_bank_a_and_return
+    read_byte_from_bank_a_hl
     ld b, a
     pop af
     push af
     inc hl
-    read_byte_from_bank_a_and_return
+    read_byte_from_bank_a_hl
     ld c, a
     pop af
 

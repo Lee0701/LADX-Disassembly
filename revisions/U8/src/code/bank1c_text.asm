@@ -897,7 +897,7 @@ CopyTile::
     ld l, c
     ; ld   a, [bc]                                  ; $2633: $0A
     ; ld a, BANK(FontTiles)
-    read_byte_from_bank_a_and_return
+    read_byte_from_bank_a_hl
     pop hl
     ldi  [hl], a                                  ; $2634: $22
     pop af
@@ -906,6 +906,48 @@ CopyTile::
     jr   nz, .copyTileLoop                        ; $2637: $20 $FA
     ret
 
+; @param a: bank number to read from
+; @param hl: address to read from
+AppendDrawCommand::
+    push hl
+    push af
+
+    push de
+    ld hl, wDrawCommand
+    ld a, [wDrawCommandsSize]
+    ld e, a
+    add $10 + $3
+    ld [wDrawCommandsSize], a
+    ld d, $00
+    add hl, de
+    pop de
+
+    ld de, $9400
+    ld a, d
+    ldi [hl], a
+    ld a, e
+    ldi [hl], a
+    ld a, $10 - 1
+    ldi [hl], a
+
+    ld d, h
+    ld e, l
+    pop af
+    pop hl
+
+    ld c, $10
+.loop
+    push af
+    read_byte_from_bank_a_hl
+    inc hl
+    ld [de], a
+    inc de
+    pop af
+
+    dec c
+    jr nz, .loop
+
+    ret
 
 Bank1C_func_001_4CDA::
     push de
@@ -916,7 +958,7 @@ Bank1C_func_001_4CDA::
     add  hl, bc                                   ; $4CE3: $09
     ; ld   a, [hl]                                  ; $4CE4: $7E
     ld a, $01
-    read_byte_from_bank_a_and_return
+    read_byte_from_bank_a_hl
 
     ld c, a
     ld b, $00
