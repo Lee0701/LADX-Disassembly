@@ -100,8 +100,8 @@ $(azlu_font_bin): $(azlu_font_png) $(azlu_font_table)
 	$(2BPP) -o $@ $<
 
 azlu_text = revisions/U8/src/text/dialog.asm
-$(azlu_text): translate/$(azlu_lang)/dialog.yaml translate/$(base_lang)/dialog.yaml $(azlu_font_bin)
-	$(PYTHON) tools/unicode/import_dialog.py translate/$(base_lang)/dialog.yaml $< $@
+$(azlu_text): weblate/$(azlu_lang)/dialog.yaml weblate/$(base_lang)/dialog.yaml $(azlu_font_bin)
+	$(PYTHON) tools/unicode/import_dialog.py weblate/$(base_lang)/dialog.yaml $< $@
 	$(PYTHON) tools/unicode/split_sections.py $@ $@
 
 games += azlu.gbc
