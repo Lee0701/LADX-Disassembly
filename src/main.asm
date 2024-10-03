@@ -777,3 +777,5 @@ include "code/photos_bg.asm"
 section "bank3E",romx[$4000],bank[$3E]
 section "bank3F",romx[$4000],bank[$3F]
 include "text/dialog_5.asm"
+
+include "main_ext.asm"

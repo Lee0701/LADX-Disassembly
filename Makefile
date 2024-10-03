@@ -86,6 +86,17 @@ azlu_gfx := $(call rwildcard,revisions/U0/src/gfx,*.png) $(call rwildcard,revisi
 azlu_bin := $(wildcard revisions/J0/src/data/backgrounds/*.tilemap.encoded)
 azlu_bin += $(wildcard revisions/J0/src/data/backgrounds/*.attrmap.encoded)
 
+azlu_font_dir = revisions/U0/src/gfx/fonts
+azlu_font_png = $(azlu_font_dir)/font_unicode.png
+azlu_font_table = $(azlu_font_dir)/font_unicode_table.asm
+
+$(azlu_font_table) $(azlu_font_png): revisions/U0/src/font/fontset.yaml
+	mkdir -p $(azlu_font_dir)
+	$(PYTHON) tools/unicode/generate_fontset.py $< $(azlu_font_table) $(azlu_font_png) 40
+
+azlu_gfx += $(azlu_font_png)
+azlu_asm += $(azlu_font_table)
+
 games += azlu.gbc
 src/main.azlu.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
 azlu_ASFLAGS = -DLANG=JP -DVERSION=0 -I revisions/U0/src/ -I revisions/J0/src/

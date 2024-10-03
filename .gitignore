@@ -35,3 +35,7 @@ DumpBanks
 # save files
 *.sav
 *.ss*
+
+# generated unicode font files
+font_unicode.*
+font_unicode_table.*
