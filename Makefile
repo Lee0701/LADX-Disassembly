@@ -34,7 +34,7 @@ FXFLAGS := \
 
 # Default target: build and test only the US 1.0 revision.
 # (Use `make all` to build and test all targets.)
-default: build test
+default: build
 
 #
 # Generic rules
@@ -76,6 +76,30 @@ src/main.%.o: src/main.asm $(asm_files) $(gfx_files:.png=.2bpp) $(bin_files)
 
 # Make may attempt to re-generate the Makefile; prevent this.
 Makefile: ;
+
+#
+# Unicode
+#
+
+azlu_asm := $(call rwildcard,revisions/U0/src,*.asm) $(call rwildcard,revisions/J0/src,*.asm)
+azlu_gfx := $(call rwildcard,revisions/U0/src/gfx,*.png) $(call rwildcard,revisions/J0/src/gfx,*.png)
+azlu_bin := $(wildcard revisions/J0/src/data/backgrounds/*.tilemap.encoded)
+azlu_bin += $(wildcard revisions/J0/src/data/backgrounds/*.attrmap.encoded)
+
+games += azlu.gbc
+src/main.azlu.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu_ASFLAGS = -DLANG=JP -DVERSION=0 -I revisions/U0/src/ -I revisions/J0/src/
+azlu_FXFLAGS = --rom-version 0 --title "ZELDA"
+
+games += azlu-r1.gbc
+src/main.azlu-r1.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu-r1_ASFLAGS = -DLANG=JP -DVERSION=1 -I revisions/U0/src/ -I revisions/J0/src/
+azlu-r1_FXFLAGS = --rom-version 1 --title "ZELDA"
+
+games += azlu-r2.gbc
+src/main.azlu-r2.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin)
+azlu-r2_ASFLAGS = -DLANG=JP -DVERSION=2 -I revisions/U0/src/ -I revisions/J0/src/
+azlu-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLU"
 
 #
 # Japanese
@@ -166,7 +190,7 @@ azle-r2_FXFLAGS = --rom-version 2 --non-japanese --title "ZELDA" --game-id "AZLE
 #
 
 # By default, build the US 1.0 revision.
-build: azle.gbc
+build: azlu.gbc
 
 # Build all revisions.
 build-all: $(games)
