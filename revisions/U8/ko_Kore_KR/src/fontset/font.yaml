@@ -1,0 +1,16 @@
+fontset:
+  first-bank: 0x50
+  pad: false
+  fonts:
+    - type: bitmap
+      file_name: font_menu_upper.png
+      charset: charset-menu-upper.txt
+    - type: outline
+      file_name: Galmuri7.ttf
+      font_size: 8
+      charset: charset-menu.txt
+      offset_x: 0
+      offset_y: -1
+    - type: bitmap
+      file_name: font_menu_lower.png
+      charset: charset-menu-lower.txt

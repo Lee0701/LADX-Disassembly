@@ -77,15 +77,15 @@ Makefile: ;
 # Unicode
 #
 
-azlu_lang = ko_Kore_KR
+azlu_lang = ja_Jpan_JP
 base_lang = ja
 
-azlu_asm = $(shell find revisions/U8 -type f -name '*.asm')
-azlu_gfx = $(shell find revisions/U8 -type f -name '*.png')
-azlu_bin = $(shell find revisions/U8 -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
+azlu_asm = $(shell find revisions/U8/$(azlu_lang) -type f -name '*.asm')
+azlu_gfx = $(shell find revisions/U8/$(azlu_lang) -type f -name '*.png')
+azlu_bin = $(shell find revisions/U8/$(azlu_lang) -type f -name '*.tilemap.encoded' -o -name '*.attrmap.encoded')
 
-azlu_fontset_dir = revisions/U8/src/fontset
-azlu_font_out_dir = revisions/U8/src/gfx/fonts
+azlu_fontset_dir = revisions/U8/$(azlu_lang)/src/fontset
+azlu_font_out_dir = revisions/U8/$(azlu_lang)/src/gfx/fonts
 azlu_fontsets = $(shell find $(azlu_fontset_dir) -type f -name '*.yaml')
 azlu_font_png = $(patsubst $(azlu_fontset_dir)/%.yaml, $(azlu_font_out_dir)/%.png, $(azlu_fontsets))
 azlu_font_table = $(patsubst %.png, %_table.asm, $(azlu_font_png))
@@ -98,24 +98,24 @@ $(azlu_font_png): $(azlu_font_out_dir)/%.png: $(azlu_fontset_dir)/%.yaml | $(azl
 $(azlu_font_bin): $(azlu_font_out_dir)/%.2bpp: $(azlu_font_out_dir)/%.png | $(azlu_font_png)
 	$(2BPP) -o $@ $<
 
-azlu_text = revisions/U8/src/text/dialog.asm
+azlu_text = revisions/U8/$(azlu_lang)/src/text/dialog.asm
 $(azlu_text): translate/$(azlu_lang)/dialog.yaml translate/$(base_lang)/dialog.yaml | $(azlu_font_bin)
 	$(PYTHON) tools/unicode/import_dialog.py translate/$(base_lang)/dialog.yaml $< $@
 	$(PYTHON) tools/unicode/split_sections.py $@ $@
 
 games += azlu.gbc
 src/main.azlu.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin) | $(azlu_text)
-azlu_ASFLAGS = -DLANG=UTF8 -DVERSION=0 -I revisions/U8/src/
+azlu_ASFLAGS = -DLANG=UTF8 -DVERSION=0 -I revisions/U8/$(azlu_lang)/src/
 azlu_FXFLAGS = --rom-version 0 --title "ZELDA"
 
 games += azlu-r1.gbc
 src/main.azlu-r1.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin) | $(azlu_text)
-azlu-r1_ASFLAGS = -DLANG=UTF8 -DVERSION=1 -I revisions/U8/src/
+azlu-r1_ASFLAGS = -DLANG=UTF8 -DVERSION=1 -I revisions/U8/$(azlu_lang)/src/
 azlu-r1_FXFLAGS = --rom-version 1 --title "ZELDA"
 
 games += azlu-r2.gbc
 src/main.azlu-r2.o: $(azlu_asm) $(azlu_gfx:.png=.2bpp) $(azlu_bin) | $(azlu_text)
-azlu-r2_ASFLAGS = -DLANG=UTF8 -DVERSION=2 -I revisions/U8/src/
+azlu-r2_ASFLAGS = -DLANG=UTF8 -DVERSION=2 -I revisions/U8/$(azlu_lang)/src/
 azlu-r2_FXFLAGS = --rom-version 2 --title "ZELDA" --game-id "AZLU"
 
 clean-azlu:
