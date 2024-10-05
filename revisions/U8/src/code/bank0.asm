@@ -459,7 +459,7 @@ func_A9B::
     ; ld   a, BANK(FontTiles)                       ; $0A9C: $3E $0F
     ; call SwitchBank                               ; $0A9E: $CD $0C $08
     callsb ExecuteDialog                            ; $0AA1: $CD $21 $23
-; TODO: Check if this works
+    ; TODO: Check if this works
     call ReloadSavedBank
     jp   RestoreStackedBankAndReturn              ; $0AA4: $C3 $73 $09
 
@@ -697,7 +697,7 @@ Farcall::
     ; Switch to bank wFarcallBank
     ld   a, [wFarcallBank]                        ; $0BD7: $FA $01 $DE
     ld   [rSelectROMBank], a                      ; $0BDA: $EA $00 $21
-; Push return bank in advance for consecutive calls
+    ; Push return bank in advance for consecutive calls
     ld   a, [wFarcallReturnBank]                  ; $0BE0: $FA $04 $DE
     push af
     ; Call the target function
