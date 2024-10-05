@@ -4,13 +4,14 @@ import re
 import yaml
 import os.path
 from PIL import Image, ImageDraw, ImageFont
+from math import ceil
 
 columns = 16
 
 glyph_width = 8
 glyph_height = 8
 
-image_height = 4096
+image_height = 8192
 image_width = glyph_width * columns
 
 black = (0, 0, 0)
@@ -130,7 +131,7 @@ def main():
 
     index = 0
     offset_y = 0
-    for font_def in fontset:
+    for font_def in fontset['fonts']:
         font_type = font_def['type']
         if font_type == 'bitmap':
             font, charset = gen_bitmap(font_def, filepath)
@@ -143,7 +144,15 @@ def main():
             output_img.paste(font, (0, offset_y))
             offset_y += font.height
 
-    first_bank = int(sys.argv[4], 16)
+    first_bank = fontset['first-bank']
+    pad = fontset['pad']
+
+    crop_height = offset_y
+    bank_height = 0x4000 // 0x20
+    if pad:
+        crop_height = ceil(crop_height / bank_height) * bank_height
+
+    output_img = output_img.crop((0, 0, image_width, crop_height))
 
     open(sys.argv[2], 'w').write(gen_table_file(table, first_bank))
     output_img.save(sys.argv[3], 'png')
