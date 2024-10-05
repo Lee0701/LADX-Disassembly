@@ -2,7 +2,7 @@
 import sys
 
 line_prefix = '    db '
-base_bank = 0x40
+base_bank = 0x60
 
 def make_sections(lines):
     sections = []

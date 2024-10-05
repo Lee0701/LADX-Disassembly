@@ -77,7 +77,7 @@ Makefile: ;
 # Unicode
 #
 
-azlu_lang = ja_Jpan_JP
+azlu_lang = ko_Kore_KR
 base_lang = ja
 
 azlu_src_dir = revisions/U8/src

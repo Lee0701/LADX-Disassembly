@@ -1,5 +1,5 @@
 fontset:
-  first-bank: 0x50
+  first-bank: 0x40
   pad: false
   fonts:
     - type: bitmap
