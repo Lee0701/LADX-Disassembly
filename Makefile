@@ -77,7 +77,7 @@ Makefile: ;
 # Unicode
 #
 
-azlu_lang = ja
+azlu_lang = ko_Kore_KR
 base_lang = ja
 
 azlu_asm = $(shell find revisions/U8 -type f -name '*.asm')
@@ -92,6 +92,7 @@ azlu_font_table = $(patsubst %.png, %_table.asm, $(azlu_font_png))
 azlu_font_bin = $(patsubst %.png, %.2bpp, $(azlu_font_png))
 
 $(azlu_font_png): $(azlu_font_out_dir)/%.png: $(azlu_fontset_dir)/%.yaml | $(azlu_fontsets)
+	mkdir -p $(azlu_font_out_dir)
 	$(PYTHON) tools/unicode/generate_fontset.py $< $(patsubst %.png, %_table.asm, $@) $@
 
 $(azlu_font_bin): $(azlu_font_out_dir)/%.2bpp: $(azlu_font_out_dir)/%.png | $(azlu_font_png)
