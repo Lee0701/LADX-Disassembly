@@ -13,9 +13,7 @@ RGBDS   :=
 
 ASM     := $(RGBDS)rgbasm
 ASFLAGS := \
-  --export-all\
-  --halt-without-nop\
-  --preserve-ld
+  --export-all
 
 LD      := $(RGBDS)rgblink
 LDFLAGS :=
@@ -35,7 +33,7 @@ PYTHON := python
 
 # Default target: build and test only the US 1.0 revision.
 # (Use `make all` to build and test all targets.)
-default: build test
+default: build
 
 #
 # Generic rules
@@ -205,7 +203,7 @@ azle-r2_FXFLAGS = --rom-version 2 --non-japanese --title "ZELDA" --game-id "AZLE
 #
 
 # By default, build the US 1.0 revision.
-build: azle.gbc
+build: azlu.gbc
 
 # Build all revisions.
 build-all: $(games)
@@ -218,7 +216,7 @@ test: build
 test-all: build-all
 	@tools/compare.sh ladx.md5 $(games)
 
-all: build-all test-all
+all: build-all
 
 tidy:
 	rm -f $(games)

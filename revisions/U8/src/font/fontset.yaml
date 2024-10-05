@@ -6,25 +6,25 @@ fontset:
     offset_x: 0
     offset_y: -1
   - type: outline
-    file_name: MisakiGothic.ttf
+    file_name: misaki_gothic.ttf
     font_size: 8
     charset: charset-alphabet.txt
     offset_x: 0
     offset_y: 0
   - type: outline
-    file_name: MisakiGothic.ttf
+    file_name: misaki_gothic.ttf
     font_size: 8
     charset: charset-punct.txt
     offset_x: 0
     offset_y: 0
   - type: outline
-    file_name: MisakiGothic.ttf
+    file_name: misaki_gothic.ttf
     font_size: 8
     charset: charset-symbol.txt
     offset_x: 0
     offset_y: 0
   - type: outline
-    file_name: MisakiGothic.ttf
+    file_name: misaki_gothic.ttf
     font_size: 8
     charset: charset-kana.txt
     offset_x: 0
@@ -42,7 +42,7 @@ fontset:
     offset_x: 0
     offset_y: -1
   - type: outline
-    file_name: MisakiGothic.ttf
+    file_name: misaki_gothic.ttf
     font_size: 8
     charset: charset-ideograph.txt
     offset_x: 0
